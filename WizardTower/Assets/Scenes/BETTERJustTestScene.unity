@@ -282,7 +282,8 @@ MonoBehaviour:
   maxRoamRange: 5
   idleTime: 2
   roamSpeed: 1
-  chaseSpeed: 15
+  chaseSpeed: 1.5
+  chasedObject: {fileID: 0}
 --- !u!1 &374131412
 GameObject:
   m_ObjectHideFlags: 0
@@ -1045,7 +1046,7 @@ GameObject:
   - component: {fileID: 950320036}
   m_Layer: 0
   m_Name: Placeholder Player (1)
-  m_TagString: Untagged
+  m_TagString: Distraction
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

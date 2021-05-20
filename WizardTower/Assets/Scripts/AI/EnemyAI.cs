@@ -8,8 +8,8 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] protected float minRoamRange = 10f;
     [SerializeField] protected float maxRoamRange = 50f;
     [SerializeField] protected float idleTime = 2f;
-    [SerializeField] protected float roamSpeed = 10f;
-    [SerializeField] protected float chaseSpeed = 15f;
+    [SerializeField] protected float roamSpeed = 1f;
+    [SerializeField] protected float chaseSpeed = 2f;
     #endregion
 
     #region State Management Variables
@@ -27,6 +27,10 @@ public class EnemyAI : MonoBehaviour
 
     #region Idling Variables
     protected float idleStartTime;
+    #endregion
+
+    #region Chasing Variables
+    [HideInInspector] public GameObject chasedObject;
     #endregion
 
     #region Reference Variables
@@ -79,11 +83,20 @@ public class EnemyAI : MonoBehaviour
                 }
                 break;
             case State.Chasing:
-                Debug.Log("Chasing!!!");
+                if (!anim.GetBool("isRunning"))
+                    anim.SetBool("isRunning", true);
+                if (chasedObject != null)
+                {
+
+                }
                 break;
             default:
                 break;
         }
+    }
+
+    protected void ChaseObject() {
+        rb2d.MovePosition(rb2d.position + new Vector2(chaseSpeed, 0) * Time.fixedDeltaTime);
     }
 
     protected void MoveToPosition() {
@@ -105,9 +118,7 @@ public class EnemyAI : MonoBehaviour
 
     // Get a random roaming position
     protected Vector2 GetRoamingPosition() {
-        
-            
-        Vector2 roamVector = new Vector2(startingPosition.x + GetRandomXDirection() * Random.Range(minRoamRange, maxRoamRange), startingPosition.y);
+        Vector2 roamVector = new Vector2(startingPosition.x + GetRandomXDirection() * Random.Range(minRoamRange, maxRoamRange), rb2d.position.y);
         float direction = roamVector.x - rb2d.position.x;
         if ((direction < 0 && transform.localScale.x > 0) || (direction > 0 && transform.localScale.x < 0))
             transform.localScale = new Vector3(-1 * transform.localScale.x, transform.localScale.y, transform.localScale.z);
@@ -136,5 +147,6 @@ public class EnemyAI : MonoBehaviour
     }
     public void TriggerIdleState() {
         state = State.Idling;
+        idleStartTime = Time.time;
     }
 }
