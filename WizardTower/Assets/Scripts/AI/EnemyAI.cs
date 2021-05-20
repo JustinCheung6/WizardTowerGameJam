@@ -44,6 +44,7 @@ public class EnemyAI : MonoBehaviour
     protected Rigidbody2D rb2d;
     protected SpriteRenderer sr;
     protected Animator anim;
+    [SerializeField] protected GameObject CaptureCollider;
     #endregion
 
     protected void Start()
@@ -105,6 +106,7 @@ public class EnemyAI : MonoBehaviour
                     else
                     {
                         state = State.Attacking;
+                        captureStartTime = Time.time;
                     }
                 }
                 else {
@@ -113,7 +115,9 @@ public class EnemyAI : MonoBehaviour
                 break;
             case State.Attacking:
                 if (chasedObject.CompareTag("Player")) {
-                    anim.Play("attack");
+                    //if (Time.time - captureStartTime >= captureExtraReactionTime) {
+                        anim.Play("attack");
+                    //}
                 }
                 TriggerIdleState();
                 break;
@@ -142,7 +146,6 @@ public class EnemyAI : MonoBehaviour
                 //rb2d.MovePosition(rb2d.position + new Vector2(speedX * -1, 0) * Time.fixedDeltaTime);
                 rb2d.velocity = new Vector2(speedX * -1, 0);
             if (chasedObject != null) {
-                Debug.Log(rb2d.velocity.y);
                 if(chasedObject.transform.position.y > rb2d.position.y && rb2d.velocity.y == 0)
                 {
                     rb2d.velocity = new Vector2(rb2d.velocity.x, jumpForce);
