@@ -240,7 +240,7 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_GravityScale: 1
   m_Material: {fileID: 0}
   m_Interpolate: 0
@@ -283,6 +283,9 @@ MonoBehaviour:
   idleTime: 2
   roamSpeed: 1
   chaseSpeed: 1.5
+  chaseJumpForce: 5
+  minCaptureRange: 2.5
+  captureExtraReactionTime: 0.5
   chasedObject: {fileID: 0}
 --- !u!1 &374131412
 GameObject:
@@ -4771,7 +4774,7 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_GravityScale: 1
   m_Material: {fileID: 0}
   m_Interpolate: 0
