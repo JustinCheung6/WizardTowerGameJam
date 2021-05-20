@@ -13,15 +13,25 @@ public class Movement : MonoBehaviour
     [SerializeField] private float moveAcc = 4f;
     [SerializeField] private float moveSpeed = 5f;
 
-    private int currentJumps = 0;
-    private float jumpTime = 0f; //Time that user has held the 'jump button'
-    private bool jumping = false; //If player is holding jump button
-
     [Header("Jumping")]
     [SerializeField] private int maxJumps = 1;
     [SerializeField] private float jumpForce = 5f;
     [SerializeField] [Tooltip("How long can the user hold the 'jump button'")] 
     private float maxJumpTime = 0.5f;
+
+    [Header("Debugging (Don't Touch)")]
+    [SerializeField] private int currentJumps = 0;
+    [SerializeField] private float jumpTime = 0f; //Time that user has held the 'jump button'
+    [SerializeField] private bool jumping = false; //If player is holding jump button
+
+    protected virtual void OnEnable()
+    {
+        UpdateManager.um.UpdateEvent += CheckGround;
+    }
+    protected virtual void OnDisable()
+    {
+        UpdateManager.um.UpdateEvent -= CheckGround;
+    }
 
     protected void Move(float direction)
     {
@@ -38,17 +48,19 @@ public class Movement : MonoBehaviour
     }
     protected void Jump(bool jumpPress, bool jumpDown)
     {
-        CheckGround();
+        float jump = jumpForce;
 
         if (jumpPress && currentJumps > 0)
         {
+            Debug.Log("Jump");
             currentJumps -= 1;
             jumping = true;
             jumpTime = 0;
         }
-        else if(jumpDown && jumping && (jumpTime + Time.deltaTime) <= maxJumpTime && rb.velocity.y > 0)
+        else if(jumpDown && jumping && (jumpTime + Time.deltaTime <= maxJumpTime) && rb.velocity.y > 0)
         {
             jumpTime += Time.deltaTime;
+            //jump += jumpTime * jumpForce;
         }
         else
         {
@@ -61,7 +73,7 @@ public class Movement : MonoBehaviour
     }
 
     private void CheckGround()
-    {
+    {   
         if (groundCheck.IsGrounded)
             currentJumps = maxJumps;
         else if (currentJumps == maxJumps)

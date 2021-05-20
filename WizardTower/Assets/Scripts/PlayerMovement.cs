@@ -4,25 +4,26 @@ using UnityEngine;
 
 public class PlayerMovement : Movement
 {
-    private void OnEnable()
+    protected override void OnEnable()
     {
+        base.OnEnable();
         UpdateManager.um.UpdateEvent += GetInputs;
     }
-    private void OnDisable()
+    protected override void OnDisable()
     {
+        base.OnDisable();
         UpdateManager.um.UpdateEvent -= GetInputs;
     }
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        groundCheck = GetComponentInChildren<GroundCheck>();
     }
 
     private void GetInputs()
     {
         Move(Input.GetAxisRaw("Horizontal"));
-
-        if (Input.GetButton("Jump"))
-            Jump(Input.GetButtonDown("Jump"), Input.GetButton("Jump"));
+        Jump(Input.GetButtonDown("Jump"), Input.GetButton("Jump"));
     }
 }
