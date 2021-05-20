@@ -68,6 +68,8 @@ public class EnemyAI : MonoBehaviour
                 MoveToPosition();
                 break;
             case State.Idling:
+                if (anim.GetBool("isRunning"))
+                    anim.SetBool("isRunning", false);
                 if (minRoamRange != 0 && maxRoamRange != 0) {
                     if (Time.time - idleStartTime >= idleTime) {
                         roamingPosition = GetRoamingPosition();
@@ -75,6 +77,9 @@ public class EnemyAI : MonoBehaviour
                         state = State.Roaming;
                     }
                 }
+                break;
+            case State.Chasing:
+                Debug.Log("Chasing!!!");
                 break;
             default:
                 break;
@@ -124,5 +129,12 @@ public class EnemyAI : MonoBehaviour
     // Returns a random X direction for the AI to travel in
     public static float GetRandomXDirection() { 
         return UnityEngine.Random.Range(-1f, 1f);
+    }
+
+    public void TriggerChaseState() {
+        state = State.Chasing;
+    }
+    public void TriggerIdleState() {
+        state = State.Idling;
     }
 }
