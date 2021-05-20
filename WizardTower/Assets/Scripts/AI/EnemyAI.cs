@@ -117,8 +117,9 @@ public class EnemyAI : MonoBehaviour
                 if (chasedObject.CompareTag("Player")) {
                     if (Time.time - captureStartTime >= captureExtraReactionTime) {
                         anim.Play("attack");
+                        TriggerIdleState();
                     }
-                    TriggerIdleState();
+                    
                 }
                 break;
             default:
