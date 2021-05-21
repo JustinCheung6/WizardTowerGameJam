@@ -11,13 +11,15 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] protected float roamSpeed = 1f;
     [SerializeField] protected float chaseSpeed = 2f;
     [SerializeField] protected float chaseJumpForce = 200f;
+    [SerializeField] protected float runTimeBeforeTurnAround = 1.5f;
     [SerializeField] protected float minCaptureRange = 2.5f;
     [SerializeField] protected float captureExtraReactionTime = 0.5f;
+    
     #endregion
 
     #region State Management Variables
     protected enum State { 
-        Roaming, Idling, Chasing, Attacking, Stunned
+        Roaming, Idling, Chasing, Attacking, Stunned, TurnAndChase
     }
     protected State state;
     #endregion
@@ -35,6 +37,7 @@ public class EnemyAI : MonoBehaviour
     #region Chasing Variables
     [HideInInspector] public GameObject chasedObject;
     [HideInInspector] public bool turnAndChaseRequested = false;
+    protected float turnAndChaseStartTime = 0f;
     #endregion
 
     #region Capture Variables
@@ -82,16 +85,20 @@ public class EnemyAI : MonoBehaviour
         StateManager();
         if (isStunned)
             state = State.Stunned;
+        if (turnAndChaseRequested)
+            state = State.TurnAndChase;
     }
 
     protected void StateManager() {
         switch (state) {
             case State.Roaming:
+                Debug.Log("Roaming");
                 if (anim.GetBool("isAttacking"))
                     anim.SetBool("isAttacking", false);
                 MoveToPosition(roamSpeed,0);
                 break;
             case State.Idling:
+                Debug.Log("Idling");
                 if (anim.GetBool("isRunning"))
                     anim.SetBool("isRunning", false);
                 
@@ -104,6 +111,7 @@ public class EnemyAI : MonoBehaviour
                 }
                 break;
             case State.Chasing:
+                Debug.Log("Chasing");
                 if (!anim.GetBool("isRunning"))
                     anim.SetBool("isRunning", true);
                 if (chasedObject != null)
@@ -124,6 +132,7 @@ public class EnemyAI : MonoBehaviour
                 }
                 break;
             case State.Attacking:
+                Debug.Log("Attacking");
                 if (chasedObject.CompareTag("Player"))
                 {
                     if (Time.time - captureStartTime >= captureExtraReactionTime)
@@ -137,32 +146,51 @@ public class EnemyAI : MonoBehaviour
                 }
                 break;
             case State.Stunned:
+                Debug.Log("Stunned");
                 if (!isStunned)
                 {
                     if(!anim.GetBool("isStunned"))
                         anim.SetBool("isStunned", true);
                     isStunned = true;
                     stunStartTime = Time.time;
-                    //anim.Play("stunned");
                     LineOfSight.SetActive(false);
                 }
                 else {
                     if (Time.time - stunStartTime >= stunDuration) {
                         isStunned = false;
                         anim.SetBool("isStunned", false);
-                        //anim.Play("stunned");
                         LineOfSight.SetActive(true);
                         TriggerIdleState();
                     }
                 }
                 break;
+            case State.TurnAndChase:
+                Debug.Log("Turn and Chasing");
+                if (turnAndChaseRequested)
+                {
+                    turnAndChaseRequested = false;
+                    turnAndChaseStartTime = Time.time;
+                }
+                else if (!turnAndChaseRequested && Time.time - turnAndChaseStartTime >= runTimeBeforeTurnAround)
+                {
+                    // Exclaimation animation here
+                    if (chasedObject == null)
+                    {
+                        transform.localScale = new Vector3(-1 * transform.localScale.x, transform.localScale.y, transform.localScale.z);
+                        if (chasedObject == null)
+                        {
+                            MoveToPosition(roamSpeed, 0);
+                            state = State.Roaming;
+                        }
+                    }
+                }
+                else if (!turnAndChaseRequested && Time.time - turnAndChaseStartTime < runTimeBeforeTurnAround) {
+                    MoveToPosition(roamSpeed,0);
+                }
+                    break;
             default:
                 break;
         }
-    }
-
-    protected void ChaseObject() {
-        rb2d.MovePosition(rb2d.position + new Vector2(chaseSpeed, 0) * Time.fixedDeltaTime);
     }
 
     protected void MoveToPosition(float speedX, float jumpForce) {
@@ -181,7 +209,10 @@ public class EnemyAI : MonoBehaviour
                 //rb2d.MovePosition(rb2d.position + new Vector2(speedX * -1, 0) * Time.fixedDeltaTime);
                 rb2d.velocity = new Vector2(speedX * -1, 0);
             if (chasedObject != null) {
-                if(chasedObject.transform.position.y > rb2d.position.y && rb2d.velocity.y == 0)
+                float direction = chasedObject.transform.position.x - rb2d.position.x;
+                if ((direction < 0 && transform.localScale.x > 0) || (direction > 0 && transform.localScale.x < 0))
+                    transform.localScale = new Vector3(-1 * transform.localScale.x, transform.localScale.y, transform.localScale.z);
+                if (chasedObject.transform.position.y > rb2d.position.y && rb2d.velocity.y == 0)
                 {
                     rb2d.velocity = new Vector2(rb2d.velocity.x, jumpForce);
                 }

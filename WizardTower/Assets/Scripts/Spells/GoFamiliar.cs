@@ -106,6 +106,7 @@ public class GoFamiliar : Spell
             casting = false;
             col.enabled = false;
             c.gameObject.GetComponent<EnemyAI>().TriggerStunState(stunTime);
+            //c.gameObject.GetComponent<EnemyAI>().turnAndChaseRequested = true;
         }
     }
     public void OnTriggerEnter2D(Collider2D c)
