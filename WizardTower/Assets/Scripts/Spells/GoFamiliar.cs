@@ -73,8 +73,8 @@ public class GoFamiliar : Spell
         int direction = (isRight) ? 1 : -1;
 
         rb.velocity = new Vector2(direction * forceDirection.x, forceDirection.y) * throwForce;
-        if (PlayerMovement.pm.GetDirection() == direction)
-            rb.velocity += new Vector2(PlayerMovement.pm.Velocity.x, 0f);
+        if (Player.pm.GetDirection() == direction)
+            rb.velocity += new Vector2(Player.pm.Velocity.x, 0f);
     }
 
     private void MakeNoise()
