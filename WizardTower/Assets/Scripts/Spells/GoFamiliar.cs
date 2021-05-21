@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class GoFamiliar : Spell
 {
+    //Spell that will makes a distraction when it hits the floor, and stuns the gaurd if it hits them
+
     private Rigidbody2D rb = null;
     private SpriteRenderer sprite = null;
     private Collider2D col = null;
+    private CircleCollider2D noiseCol = null;
 
     private Vector2 forceDirection = new Vector2();
 
@@ -17,6 +20,9 @@ public class GoFamiliar : Spell
 
     private float timer = 0f;
 
+
+    public bool MakingNoise { get => timer > 0f; }
+
     private void Start()
     {
         forceDirection = new Vector2(Mathf.Cos((Mathf.PI * throwAngle) / 180), 
@@ -24,6 +30,17 @@ public class GoFamiliar : Spell
         rb = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
         col = GetComponent<Collider2D>();
+
+        foreach(CircleCollider2D c in GetComponentsInChildren<CircleCollider2D>())
+        {
+            if (c != col)
+            {
+                noiseCol = c;
+                break;
+            }
+        }
+
+
     }
     public override bool CanCast()
     {
@@ -62,21 +79,20 @@ public class GoFamiliar : Spell
 
     private void MakeNoise()
     {
-
+        
         timer += Time.deltaTime;
         if(timer >= noiseTime)
         {
+            noiseCol.enabled = false;
             casting = false;
+            timer = 0;
             UpdateManager.um.UpdateEvent -= MakeNoise;
         }
     }
 
     public override void ResetSpell()
     {
-        casting = false;
         casted = false;
-        col.enabled = true;
-        timer = 0f;
     }
 
     public void OnCollisionEnter2D(Collision2D c)
@@ -92,6 +108,7 @@ public class GoFamiliar : Spell
         if (c.tag == "Floor")
         {
             col.enabled = false;
+            noiseCol.enabled = true;
             UpdateManager.um.UpdateEvent += MakeNoise;
         }
     }

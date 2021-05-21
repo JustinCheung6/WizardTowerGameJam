@@ -4,13 +4,10 @@ using UnityEngine;
 
 public class PlayerMovement : Movement
 {
-    public static PlayerMovement pm = null;
+    //Movement designed for player (updates movement based on user input)
 
     protected override void OnEnable()
     {
-        if (pm == null)
-            pm = this;
-
         base.OnEnable();
         UpdateManager.um.UpdateEvent += GetInputs;
     }

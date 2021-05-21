@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    //Class that controls player aside from movement script
+
     public static Player p = null;
+    public static PlayerMovement pm = null;
 
     private SpriteRenderer sprite = null;
 
@@ -14,6 +17,8 @@ public class Player : MonoBehaviour
     {
         if (p == null)
             p = this;
+        if (pm == null)
+            pm = this.GetComponent<PlayerMovement>();
     }
 
     private void Start()
