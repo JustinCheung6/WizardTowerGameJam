@@ -8,7 +8,15 @@ public class EnemyLineOfSight : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player") || collision.CompareTag("Distraction")) {
-            associatedAI.chasedObject = collision.gameObject;
+            if (associatedAI.chasedObject != null)
+            {
+                if (!associatedAI.chasedObject.CompareTag("Player"))
+                    associatedAI.chasedObject = collision.gameObject;
+            }
+            else {
+                associatedAI.chasedObject = collision.gameObject;
+            }
+
             associatedAI.TriggerChaseState();
         }  
     }
