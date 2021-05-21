@@ -12,11 +12,13 @@ public class GoFamiliar : Spell
     private CircleCollider2D noiseCol = null;
 
     private Vector2 forceDirection = new Vector2();
+    private bool alreadyHitFloor = false;
 
     [SerializeField] private Vector2 summonOffset = new Vector2();
     [SerializeField] private float throwForce = 5f;
     [SerializeField] private float throwAngle = 45f;
     [SerializeField] private float noiseTime = 2f;
+    [SerializeField] private float stunTime = 2f; 
 
     private float timer = 0f;
 
@@ -64,6 +66,7 @@ public class GoFamiliar : Spell
         int direction = (isRight) ? 1 : -1;
         transform.position = Player.p.transform.position;
         transform.position += new Vector3(direction * summonOffset.x, summonOffset.y);
+        alreadyHitFloor = false;
     }
 
     private void CastFamiliar(bool isRight)
@@ -98,10 +101,11 @@ public class GoFamiliar : Spell
 
     public void OnCollisionEnter2D(Collision2D c)
     {
-        if(c.gameObject.tag == "Enemy")
+        if(c.gameObject.CompareTag("Enemy") && ! alreadyHitFloor)
         {
             casting = false;
             col.enabled = false;
+            c.gameObject.GetComponent<EnemyAI>().TriggerStunState(stunTime);
         }
     }
     public void OnTriggerEnter2D(Collider2D c)
@@ -112,6 +116,7 @@ public class GoFamiliar : Spell
             col.enabled = false;
             noiseCol.enabled = true;
             UpdateManager.um.UpdateEvent += MakeNoise;
+            alreadyHitFloor = true;
         }
     }
 }
