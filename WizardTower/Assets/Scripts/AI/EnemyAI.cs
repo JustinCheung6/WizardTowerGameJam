@@ -17,7 +17,7 @@ public class EnemyAI : MonoBehaviour
 
     #region State Management Variables
     protected enum State { 
-        Roaming, Idling, Chasing, Attacking
+        Roaming, Idling, Chasing, Attacking, Stunned
     }
     protected State state;
     #endregion
@@ -40,11 +40,18 @@ public class EnemyAI : MonoBehaviour
     protected float captureStartTime;
     #endregion
 
+    #region Stunned Variables
+    protected bool isStunned = false;
+    protected float stunDuration = 0f;
+    protected float stunStartTime;
+    #endregion
+
     #region Reference Variables
     protected Rigidbody2D rb2d;
     protected SpriteRenderer sr;
     protected Animator anim;
     [SerializeField] protected GameObject CaptureCollider;
+    [SerializeField] protected GameObject LineOfSight;
     #endregion
 
     protected void Start()
@@ -72,6 +79,8 @@ public class EnemyAI : MonoBehaviour
     protected void FixedUpdate()
     {
         StateManager();
+        if (isStunned)
+            state = State.Stunned;
     }
 
     protected void StateManager() {
@@ -119,7 +128,26 @@ public class EnemyAI : MonoBehaviour
                         anim.Play("attack");
                         TriggerIdleState();
                     }
-                    
+                }
+                break;
+            case State.Stunned:
+                if (!isStunned)
+                {
+                    if(!anim.GetBool("isStunned"))
+                        anim.SetBool("isStunned", true);
+                    isStunned = true;
+                    stunStartTime = Time.time;
+                    //anim.Play("stunned");
+                    LineOfSight.SetActive(false);
+                }
+                else {
+                    if (Time.time - stunStartTime >= stunDuration) {
+                        isStunned = false;
+                        anim.SetBool("isStunned", false);
+                        //anim.Play("stunned");
+                        LineOfSight.SetActive(true);
+                        TriggerIdleState();
+                    }
                 }
                 break;
             default:
@@ -186,6 +214,9 @@ public class EnemyAI : MonoBehaviour
     public void TriggerIdleState() {
         state = State.Idling;
         idleStartTime = Time.time;
-        
+    }
+    public void TriggerStunState(float stunDuration) {
+        this.stunDuration = stunDuration;
+        state = State.Stunned;
     }
 }
