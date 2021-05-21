@@ -75,6 +75,8 @@ public class GoFamiliar : Spell
         rb.velocity = new Vector2(direction * forceDirection.x, forceDirection.y) * throwForce;
         if (Player.pm.GetDirection() == direction)
             rb.velocity += new Vector2(Player.pm.Velocity.x, 0f);
+
+        col.enabled = true;
     }
 
     private void MakeNoise()
@@ -84,7 +86,6 @@ public class GoFamiliar : Spell
         if(timer >= noiseTime)
         {
             noiseCol.enabled = false;
-            casting = false;
             timer = 0;
             UpdateManager.um.UpdateEvent -= MakeNoise;
         }
@@ -107,6 +108,7 @@ public class GoFamiliar : Spell
     {
         if (c.tag == "Floor")
         {
+            casting = false;
             col.enabled = false;
             noiseCol.enabled = true;
             UpdateManager.um.UpdateEvent += MakeNoise;
