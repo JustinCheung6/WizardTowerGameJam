@@ -6,11 +6,14 @@ public class SpellManager : MonoBehaviour
 {
     //Manager that handles which spells the player can cast next, and casting spells
 
-    [SerializeField] private GameObject[] spellPrefab;
-    private Spell[] spells;
+    [Header("Available Spells")]
+    [SerializeField] private GameObject[] spellPrefabs;
 
-    private List<Spell> inventory = new List<Spell>();
-    private List<float> cooldowns = new List<float>();
+    [Header("Debug")]
+    [SerializeField] private List<Spell> inventory = new List<Spell>();
+    [SerializeField] private List<float> cooldowns = new List<float>();
+
+    private Dictionary<int, List<Spell>> spellPools = new Dictionary<int, List<Spell>>();
 
     private void OnEnable()
     {
@@ -24,43 +27,72 @@ public class SpellManager : MonoBehaviour
     }
     private void Start()
     {
-        spells = new Spell[spellPrefab.Length];
-        for (int i = 0; i < spellPrefab.Length; i++)
-            spells[i] = spellPrefab[i].GetComponent<Spell>();
+        //spells = new Spell[spellPrefabs.Length];
+
+        for (int i = 0; i < spellPrefabs.Length; i++)
+        {
+            List<Spell> spellPool = new List<Spell>();
+            for(int j = 0; j < 3; j++)
+            {
+                Spell spell = Instantiate(spellPrefabs[i], transform).GetComponent<Spell>();
+                spell.enabled = false;
+                spellPool.Add(spell);
+            }
+            spellPools.Add(i, spellPool);
+        }
+
+            
     }
     private void ManageSpells()
     {
-        if (spells == null)
+        if (spellPools.Count == 0)
             return;
 
         //Fire spell
         if (Input.GetButtonDown("Fire") || inventory[0].CastingSpell)
-            inventory[0].CastSpell(Input.GetButtonDown("Fire"), Input.GetButton("Fire"), Input.GetButtonUp("Fire"));
+            if(cooldowns[0] <= 0)
+                inventory[0].CastSpell(Input.GetButtonDown("Fire"), 
+                    Input.GetButton("Fire"), Input.GetButtonUp("Fire"));
 
         //Remove Spell if casted
         if (inventory[0].SpellCasted)
         {
+            Spell tmp = inventory[0];
             inventory.RemoveAt(0);
             cooldowns.RemoveAt(0);
+
+            tmp.enabled = false;
+            tmp.ResetSpell();
+
+            foreach(List<Spell> spellPool in spellPools.Values)
+            {
+                if (spellPool.Contains(tmp))
+                {
+                    spellPool.Remove(tmp);
+                    spellPool.Add(tmp);
+                    break;
+                }
+            }
         }
     }
     private void ManageInventory()
     {
-        if (spells == null)
+        if (spellPools.Count == 0)
             return;
 
         //Case: add more spells
-        if (inventory.Count <= spells.Length)
+        if (inventory.Count <= spellPrefabs.Length)
         {
-            ShuffleSpells();
-            foreach (Spell p in spells)
+            Spell[] spells = GetNextSet();
+
+            for (int i = 0; i < spells.Length; i++)
             {
-                inventory.Add(p);
-                cooldowns.Add(p.Cooldown);
+                inventory.Add(spells[i]);
+                cooldowns.Add(spells[i].Cooldown);
             }
         }
 
-        for(int i = 0; i < spells.Length; i++)
+        for(int i = 0; i < spellPrefabs.Length; i++)
         {
             if (cooldowns[i] > Time.deltaTime)
                 cooldowns[i] -= Time.deltaTime;
@@ -68,9 +100,13 @@ public class SpellManager : MonoBehaviour
                 cooldowns[i] = 0;
         }
     }
-    private void ShuffleSpells()
+    private Spell[] GetNextSet()
     {
-        for(int i = 0; i < 2; i++)
+        Spell[] spells = new Spell[spellPrefabs.Length];
+        for (int i = 0; i < spells.Length; i++)
+            spells[i] = PoolSpell(i);
+
+        for (int i = 0; i < 2; i++)
             for(int j = 0; j < spells.Length; j++)
             {
                 Spell tmp = spells[j];
@@ -79,5 +115,20 @@ public class SpellManager : MonoBehaviour
                 spells[j] = spells[randIndex];
                 spells[randIndex] = tmp;
             }
+        return spells;
+    }
+
+    private Spell PoolSpell(int index)
+    {
+        List<Spell> spellPool = spellPools[index];
+
+        for(int i = 0; i < spellPool.Count; i++)
+            if (!spellPool[i].enabled)
+            {
+                spellPool[i].enabled = true;
+                return spellPool[i];
+            }
+
+        return null;
     }
 }

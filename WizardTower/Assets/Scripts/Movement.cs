@@ -24,6 +24,8 @@ public class Movement : MonoBehaviour
     [SerializeField] private float jumpTime = 0f; //Time that user has held the 'jump button'
     [SerializeField] private bool jumping = false; //If player is holding jump button
 
+    public Vector3 Velocity { get => rb.velocity; }
+
     protected virtual void OnEnable()
     {
         UpdateManager.um.UpdateEvent += CheckGround;
@@ -78,5 +80,15 @@ public class Movement : MonoBehaviour
             currentJumps = maxJumps;
         else if (currentJumps == maxJumps)
             currentJumps = maxJumps - 1;
+    }
+
+    public int GetDirection()
+    {
+        if (rb.velocity.x > 0)
+            return 1;
+        else if (rb.velocity.x < 0)
+            return -1;
+        else
+            return 0;
     }
 }

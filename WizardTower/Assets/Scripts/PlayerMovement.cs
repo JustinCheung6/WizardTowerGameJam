@@ -4,8 +4,13 @@ using UnityEngine;
 
 public class PlayerMovement : Movement
 {
+    public static PlayerMovement pm = null;
+
     protected override void OnEnable()
     {
+        if (pm == null)
+            pm = this;
+
         base.OnEnable();
         UpdateManager.um.UpdateEvent += GetInputs;
     }
