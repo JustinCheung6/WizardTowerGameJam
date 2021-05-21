@@ -34,6 +34,7 @@ public class EnemyAI : MonoBehaviour
 
     #region Chasing Variables
     [HideInInspector] public GameObject chasedObject;
+    [HideInInspector] public bool turnAndChaseRequested = false;
     #endregion
 
     #region Capture Variables
@@ -215,7 +216,8 @@ public class EnemyAI : MonoBehaviour
         state = State.Idling;
         idleStartTime = Time.time;
     }
-    public void TriggerStunState(float stunDuration) {
+    public void TriggerStunState(float stunDuration)
+    {
         this.stunDuration = stunDuration;
         state = State.Stunned;
     }

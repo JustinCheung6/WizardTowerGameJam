@@ -15,7 +15,8 @@ public class EnemyLineOfSight : MonoBehaviour
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.CompareTag("Player") || collision.CompareTag("Distraction")) {
-            associatedAI.chasedObject = null;
+            if(!associatedAI.turnAndChaseRequested)
+                associatedAI.chasedObject = null;
             associatedAI.TriggerIdleState();
         }
             
