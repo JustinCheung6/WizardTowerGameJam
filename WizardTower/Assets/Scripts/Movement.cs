@@ -39,10 +39,16 @@ public class Movement : MonoBehaviour
     {
         float move = rb.velocity.x;
 
-        if (direction > 0)
+        if (direction > 0) {
             move = Mathf.Clamp(move + (moveAcc * Time.fixedDeltaTime), moveAcc, moveSpeed);
-        else if (direction < 0)
+            if (gameObject.transform.localScale.x < 0)
+                gameObject.transform.localScale = new Vector3(gameObject.transform.localScale.x * -1, gameObject.transform.localScale.y, gameObject.transform.localScale.z);
+        }
+        else if (direction < 0) {
             move = Mathf.Clamp(move - (moveAcc * Time.fixedDeltaTime), -moveSpeed, -moveAcc);
+            if (gameObject.transform.localScale.x > 0)
+                gameObject.transform.localScale = new Vector3(gameObject.transform.localScale.x * -1, gameObject.transform.localScale.y, gameObject.transform.localScale.z);
+        }
         else
             move = 0;
 
@@ -84,10 +90,12 @@ public class Movement : MonoBehaviour
 
     public int GetDirection()
     {
-        if (rb.velocity.x > 0)
+        if (rb.velocity.x > 0) {
             return 1;
-        else if (rb.velocity.x < 0)
+        }
+        else if (rb.velocity.x < 0) {
             return -1;
+        } 
         else
             return 0;
     }
