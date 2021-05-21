@@ -124,11 +124,16 @@ public class EnemyAI : MonoBehaviour
                 }
                 break;
             case State.Attacking:
-                if (chasedObject.CompareTag("Player")) {
-                    if (Time.time - captureStartTime >= captureExtraReactionTime) {
+                if (chasedObject.CompareTag("Player"))
+                {
+                    if (Time.time - captureStartTime >= captureExtraReactionTime)
+                    {
                         anim.Play("attack");
                         TriggerIdleState();
                     }
+                }
+                else {
+                    TriggerIdleState();
                 }
                 break;
             case State.Stunned:
@@ -218,7 +223,9 @@ public class EnemyAI : MonoBehaviour
     }
     public void TriggerStunState(float stunDuration)
     {
-        this.stunDuration = stunDuration;
-        state = State.Stunned;
+        if (!isStunned) {
+            this.stunDuration = stunDuration;
+            state = State.Stunned;
+        }
     }
 }
