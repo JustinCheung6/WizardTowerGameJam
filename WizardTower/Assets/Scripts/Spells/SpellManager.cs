@@ -5,6 +5,7 @@ using UnityEngine;
 public class SpellManager : MonoBehaviour
 {
     //Manager that handles which spells the player can cast next, and casting spells
+    public static SpellManager sm = null;
 
     [Header("Available Spells")]
     [SerializeField] private GameObject[] spellPrefabs;
@@ -17,8 +18,14 @@ public class SpellManager : MonoBehaviour
 
     private Dictionary<int, List<Spell>> spellPools = new Dictionary<int, List<Spell>>();
 
+    public bool IsCurrentSpell(Spell spell) { return spell == inventory[0]; }
+    public void ExtendCooldown(float amount) { cooldowns[0] += amount; }
+
     private void OnEnable()
     {
+        if (sm == null)
+            sm = this;
+
         UpdateManager.um.UpdateEvent += ManageInventory;
         UpdateManager.um.UpdateEvent += ManageSpells;
     }
