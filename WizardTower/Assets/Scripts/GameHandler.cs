@@ -29,7 +29,11 @@ public class GameHandler : MonoBehaviour
     [SerializeField] private GameObject TitleScreen;
     [SerializeField] private GameObject PauseScreen;
     [SerializeField] private GameObject CapturedScreen;
-    
+    [SerializeField] private GameObject PasswordScreen;
+    [SerializeField] private InputField PasswordInputField;
+    [SerializeField] private Text PasswordValidationText;
+    private string[] levelPasswords = { "gqj67w", "t2ylha", "8ken4t",  "yvr79h"};
+
 
     #region Reference bools
     private static bool DoryGotCpatured = false;
@@ -73,6 +77,7 @@ public class GameHandler : MonoBehaviour
     }
     #endregion
 
+    #region Public methods
     public void LoadLevelAsync(string sceneName) {
         int requestedIndex = GetLoadingLevelIndex(sceneName);
         if (requestedIndex >= 0)
@@ -119,7 +124,6 @@ public class GameHandler : MonoBehaviour
         }
     }
 
-
     public void TogglePauseMenu() {
         if (!PauseScreen.activeSelf && !isLoading && currentScene != SceneNames.MainMenu)
         {
@@ -132,13 +136,70 @@ public class GameHandler : MonoBehaviour
         }   
     }
 
+    public void TogglePasswordScreen() {
+        if (PasswordScreen.activeSelf) {
+            PasswordScreen.SetActive(false);
+            ResetToValidating();
+            PasswordInputField.text = "";
+        }
+        else
+            PasswordScreen.SetActive(true);
+    }
+
+    public void ValidatePassword() {
+        bool matched = false;
+        for (int i = 0; i < levelPasswords.Length; i++) {
+            if (levelPasswords[i].Equals(PasswordInputField.text)) {
+                matched = true;
+                break;
+            }
+        }
+        if (matched)
+        {
+            PasswordValidationText.text = "Success!";
+            switch (PasswordInputField.text)
+            {
+                case "gqj67w":
+                    LoadLevelAsync("Floor1");
+                    break;
+                case "t2ylha":
+                    LoadLevelAsync("Floor2");
+                    break;
+                case "8ken4t":
+                    LoadLevelAsync("Floor3");
+                    break;
+                case "yvr79h":
+                    LoadLevelAsync("FinalScene");
+                    break;
+                default:
+                    PasswordValidationText.text = "Invalid.";
+                    break;
+            }
+            if (PasswordValidationText.text.Equals("Success!"))
+                TogglePasswordScreen();
+        }
+        else {
+            PasswordValidationText.text = "Invalid.";
+        }
+    }
+
+    public void ResetToValidating() {
+        PasswordValidationText.text = "Validating...";
+    }
+
     public void QuitApplication() {
         Debug.Log("Exiting game...");
         Application.Quit();
     }
 
+    #endregion
+
     private void RestartLevel() { 
-        
+        // DORY COLLAPSE ANIMATION
+        // TIMESCALE TO 0
+        // ENABLE CAPTURED SCREEN W/ ANIMATION
+        // WAIT 5 SECONDS
+        // RESET LEVEL
     }
 
     private int GetLoadingLevelIndex(string prompt) {
