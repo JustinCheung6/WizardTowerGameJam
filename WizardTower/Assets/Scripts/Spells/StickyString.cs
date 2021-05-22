@@ -11,14 +11,11 @@ public class StickyString : Spell
     private Transform target = null;
     private float stringSize = 0;
 
-    //Up
-    private float upSpeed = 0f;
-    private float upTime = 0f;
     //Guard
     private bool flingLeft = false;
 
     [Header("Ceiling Grab")]
-    [SerializeField] private float launchTime = 1f;
+    [SerializeField] private float upSpeed = 10f;
     [Tooltip("How far will player be from ceiling after being launched")]
     [SerializeField] private float ceilingOffset = 1f;
 
@@ -42,11 +39,13 @@ public class StickyString : Spell
 
         if (Input.GetAxis("Vertical") > 0)
         {
-            target = RaycastObject(true).parent;
+            target = RaycastObject(true);
 
-            upSpeed = ((target.position.y - target.lossyScale.y/2) - ceilingOffset - 
-                (Player.p.transform.position.y + Player.p.transform.lossyScale.y/2)) / launchTime;
-            
+            Player.pm.Immobilize();
+            sprite.enabled = true;
+            casted = true;
+            casting = false;
+
             UpdateManager.um.FixedUpdateEvent += ShootUp;
         }
         else if (Player.pm.IsGrounded)
@@ -55,37 +54,34 @@ public class StickyString : Spell
             target = RaycastObject(false);
             //flingLeft = Player.p.transform.position.x < target.position.x;
 
+            Player.pm.Immobilize();
+            sprite.enabled = true;
+            casted = true;
+            casting = false;
+
             UpdateManager.um.FixedUpdateEvent += DragGuard;
         }
-        else
-            return;
-
-        Player.pm.Immobilize();
-        sprite.enabled = true;
-        casted = true;
-        casting = false;
     }
 
     private void ShootUp()
     {
-        upTime += Time.fixedDeltaTime;
         float travel = upSpeed * Time.fixedDeltaTime;
 
-        if (Player.p.transform.position.y + travel < target.position.y)
+        if (Player.p.transform.position.y + travel < target.position.y - ceilingOffset)
         {
             Player.p.transform.position += new Vector3(0f, travel);
         }
         else
         {
-            Player.p.transform.position = new Vector3(Player.p.transform.position.x, target.position.y);
+            Player.p.transform.position = new Vector3(Player.p.transform.position.x, target.position.y - ceilingOffset);
         }
 
         transform.position = new Vector3(Player.p.transform.position.x, 
-            Player.p.transform.position.y + (target.position.y/2) );
+            Player.p.transform.position.y + (target.position.y - Player.p.transform.position.y) /2 );
         transform.localScale = new Vector3(stringSize,
             target.position.y - Player.p.transform.position.y);
 
-        if(upTime >= launchTime)
+        if (Player.p.transform.position.y + travel >= target.position.y - ceilingOffset)
         {
             casted = false;
             UpdateManager.um.FixedUpdateEvent -= ShootUp;
@@ -123,7 +119,6 @@ public class StickyString : Spell
         sprite.enabled = false;
         Player.pm.Mobilize();
         target = null;
-        upSpeed = upTime = 0f;
         transform.localScale = new Vector3(stringSize, stringSize);
 
         casting = false;

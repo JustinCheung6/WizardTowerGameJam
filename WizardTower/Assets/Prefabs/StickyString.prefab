@@ -97,5 +97,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cooldown: 5
   castRange: {x: 25, y: 99999}
-  launchTime: 0.3
-  ceilingOffset: 2
+  upSpeed: 50
+  ceilingOffset: 0.5
