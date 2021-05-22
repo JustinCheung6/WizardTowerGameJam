@@ -102,16 +102,17 @@ public class StickyString : Spell
         {
             transform.localScale = new Vector3(target.position.x - Player.p.transform.position.x, 
                 stringSize);
-            
+            transform.position = new Vector3(target.position.x + 
+                (Player.p.transform.position.x - target.position.x) / 2, Player.p.transform.position.y);
+
         }
         else if (Player.p.transform.position.x < target.position.x)
         {
             transform.localScale = new Vector3( Player.p.transform.position.x - target.position.x,
                 stringSize);
+            transform.position = new Vector3(Player.p.transform.position.x +
+                 (target.position.x - Player.p.transform.position.x) / 2, Player.p.transform.position.y);
         }
-
-        transform.position = new Vector3(Player.p.transform.position.x + target.position.x / 2,
-                Player.p.transform.position.y);
     }
 
     public override void ResetSpell()
