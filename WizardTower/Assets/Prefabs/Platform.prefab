@@ -120,7 +120,7 @@ GameObject:
   - component: {fileID: 8583391409638356755}
   - component: {fileID: 8583391409638356756}
   - component: {fileID: 8583391409638356757}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: FloorTrigger
   m_TagString: Floor
   m_Icon: {fileID: 0}

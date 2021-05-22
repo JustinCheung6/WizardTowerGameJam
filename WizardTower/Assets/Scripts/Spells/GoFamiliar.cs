@@ -8,11 +8,9 @@ public class GoFamiliar : Spell
 
     private Rigidbody2D rb = null;
     private SpriteRenderer sprite = null;
-    private Collider2D col = null;
-    private CircleCollider2D noiseCol = null;
+    [SerializeField] private CircleCollider2D noiseCol = null;
 
     private Vector2 forceDirection = new Vector2();
-    private bool alreadyHitFloor = false;
 
     [SerializeField] private Vector2 summonOffset = new Vector2();
     [SerializeField] private float throwForce = 5f;
@@ -31,11 +29,10 @@ public class GoFamiliar : Spell
             Mathf.Sin((Mathf.PI * throwAngle) / 180));
         rb = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
-        col = GetComponent<Collider2D>();
 
-        foreach(CircleCollider2D c in GetComponentsInChildren<CircleCollider2D>())
+        foreach (CircleCollider2D c in GetComponentsInChildren<CircleCollider2D>())
         {
-            if (c != col)
+            if (c.isTrigger)
             {
                 noiseCol = c;
                 break;
@@ -54,6 +51,7 @@ public class GoFamiliar : Spell
         if (!press)
             return;
 
+        casting = true;
         bool direction = !Player.p.SpriteRen.flipX;
 
         ReturnFamiliar(direction);
@@ -66,7 +64,6 @@ public class GoFamiliar : Spell
         int direction = (isRight) ? 1 : -1;
         transform.position = Player.p.transform.position;
         transform.position += new Vector3(direction * summonOffset.x, summonOffset.y);
-        alreadyHitFloor = false;
     }
 
     private void CastFamiliar(bool isRight)
@@ -78,46 +75,49 @@ public class GoFamiliar : Spell
         rb.velocity = new Vector2(direction * forceDirection.x, forceDirection.y) * throwForce;
         if (Player.pm.GetDirection() == direction)
             rb.velocity += new Vector2(Player.pm.Velocity.x, 0f);
-
-        col.enabled = true;
     }
 
     private void MakeNoise()
     {
-        
         timer += Time.deltaTime;
         if(timer >= noiseTime)
         {
-            noiseCol.enabled = false;
-            timer = 0;
+            casted = false;
             UpdateManager.um.UpdateEvent -= MakeNoise;
         }
     }
 
     public override void ResetSpell()
     {
+        noiseCol.enabled = false;
+        timer = 0;
         casted = false;
     }
 
     public void OnCollisionEnter2D(Collision2D c)
     {
-        if(c.gameObject.CompareTag("Enemy") && ! alreadyHitFloor)
+        if (!casting)
+            return;
+
+        if(c.gameObject.CompareTag("Enemy"))
         {
-            casting = false;
-            col.enabled = false;
             c.gameObject.GetComponent<EnemyAI>().TriggerStunState(stunTime);
-            //c.gameObject.GetComponent<EnemyAI>().turnAndChaseRequested = true;
+            casting = false;
+            casted = false;
         }
+
     }
     public void OnTriggerEnter2D(Collider2D c)
     {
-        if (c.tag == "Floor")
+        if (!casting)
+            return;
+
+        if (c.gameObject.CompareTag("Floor"))
         {
+            Debug.Log("Yogurt Floor");
             casting = false;
-            col.enabled = false;
             noiseCol.enabled = true;
             UpdateManager.um.UpdateEvent += MakeNoise;
-            alreadyHitFloor = true;
         }
     }
 }
