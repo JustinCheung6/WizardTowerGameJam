@@ -4691,7 +4691,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LoadingScreens:
   - {fileID: 1711219097}
-  readySlide: {fileID: 946478083}
+  readySlide: {fileID: 946478085}
   PauseScreen: {fileID: 0}
   CapturedScreen: {fileID: 0}
 --- !u!4 &1534348360

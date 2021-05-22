@@ -24,6 +24,7 @@ public class GameHandler : MonoBehaviour
     #region Loading
     [SerializeField] private List<GameObject> LoadingScreens;
     [SerializeField] private Slider readySlide;
+    private float loadingProgress = 0f;
     #endregion
 
     [SerializeField] private GameObject PauseScreen;
@@ -66,16 +67,27 @@ public class GameHandler : MonoBehaviour
 
     public void LoadLevelAsync(string sceneName) {
         LoadingScreens[0].SetActive(true);
-        //StartCoroutine(LoadAsynchronously(sceneName));
+        StartCoroutine(LoadAsynchronously(sceneName));
     }
     IEnumerator LoadAsynchronously(string sceneName) {
         AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
+        operation.allowSceneActivation = false;
         while (!operation.isDone) {
-            float progress = Mathf.Clamp01(operation.progress / 0.9f);
-            readySlide.value = progress;
-            if (progress >= 1) {
-                readySlide.gameObject.SetActive(false);
+            if (loadingProgress < 1) {
+                loadingProgress = Mathf.Clamp01(operation.progress / 0.9f);
+                readySlide.value = loadingProgress;
             }
+            else if (loadingProgress >= 1) {
+                if (readySlide.IsActive()) {
+                    readySlide.gameObject.SetActive(false);
+                }
+            }
+            if (playerisReady)
+            {
+                loadingProgress = 0f;
+                operation.allowSceneActivation = true;
+            }
+            Debug.Log("Looping");
             yield return null;
         }
     }
