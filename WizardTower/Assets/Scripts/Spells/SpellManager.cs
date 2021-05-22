@@ -9,9 +9,9 @@ public class SpellManager : MonoBehaviour
     [Header("Available Spells")]
     [SerializeField] private GameObject[] spellPrefabs;
 
-    [Header("Debug")]
-    [SerializeField] private List<Spell> inventory = new List<Spell>();
-    [SerializeField] private List<float> cooldowns = new List<float>();
+    //[Header("Debug")]
+    private List<Spell> inventory = new List<Spell>();
+    private List<float> cooldowns = new List<float>();
 
     private List<Spell> castedSpells = new List<Spell>();
 
@@ -51,7 +51,7 @@ public class SpellManager : MonoBehaviour
             return;
 
         //Fire spell
-        if (Input.GetButtonDown("Fire") || inventory[0].CastingSpell)
+        if ((Input.GetButtonDown("Fire") && inventory[0].CanCast() ) || inventory[0].CastingSpell)
             if(cooldowns[0] <= 0)
                 inventory[0].CastSpell(Input.GetButtonDown("Fire"), 
                     Input.GetButton("Fire"), Input.GetButtonUp("Fire"));

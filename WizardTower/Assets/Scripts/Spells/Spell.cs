@@ -8,7 +8,7 @@ public abstract class Spell : MonoBehaviour
     
     [SerializeField] private float cooldown = 5f;
     protected bool casting = false;
-    [SerializeField] protected bool casted = false;
+    protected bool casted = false;
 
     public float Cooldown { get => cooldown; }
     public bool SpellCasted { get => casted; }
