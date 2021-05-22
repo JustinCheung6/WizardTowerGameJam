@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class GameHandler : MonoBehaviour
 {
     #region Singleton
-    private static readonly GameHandler instance = new GameHandler();
+    private static GameHandler instance;
     static GameHandler() { }
     private GameHandler() { }
     public static GameHandler Instance
@@ -16,35 +16,46 @@ public class GameHandler : MonoBehaviour
     }
     #endregion
     public enum SceneNames { 
-        MainMenu, Tutorial, Floor1, Floor2, Floor3, FinalScene
+        MainMenu, Floor0, Floor1, Floor2, Floor3, FinalScene
     }
     public static SceneNames currentScene;
-    private float currentTimescale = 1f;
 
     #region Loading
     [SerializeField] private List<GameObject> LoadingScreens;
-    [SerializeField] private Slider readySlide;
+    [SerializeField] private List<Slider> ReadySlides;
     private float loadingProgress = 0f;
     #endregion
 
+    [SerializeField] private GameObject TitleScreen;
     [SerializeField] private GameObject PauseScreen;
     [SerializeField] private GameObject CapturedScreen;
+    
 
     #region Reference bools
-    private static bool TogglePauseScreenRequested = false;
     private static bool DoryGotCpatured = false;
     private static bool playerisReady = false;
+    private static bool isLoading = false;
     #endregion
 
     private void Awake()
     {
-        DontDestroyOnLoad(this.gameObject);
+        if (instance == null) {
+            instance = this;
+        }
+        if (instance == this)
+        {
+            DontDestroyOnLoad(this.gameObject);
+        }
+        else {
+            Destroy(this.gameObject);
+        }
+        currentScene = SceneNames.MainMenu;
+        TitleScreen.SetActive(true);
     }
 
     private void Update()
     {
-        if (TogglePauseScreenRequested) {
-            TogglePauseScreenRequested = false;
+        if (Input.GetButtonUp("Cancel")) {
             TogglePauseMenu();
         }
         if (DoryGotCpatured) {
@@ -54,9 +65,6 @@ public class GameHandler : MonoBehaviour
     }
 
     #region Static set methods
-    public static void RequestPauseToggle() {
-        TogglePauseScreenRequested = true;
-    }
     public static void SignalDoryCapture() {
         DoryGotCpatured = true;
     }
@@ -66,39 +74,95 @@ public class GameHandler : MonoBehaviour
     #endregion
 
     public void LoadLevelAsync(string sceneName) {
-        LoadingScreens[0].SetActive(true);
-        StartCoroutine(LoadAsynchronously(sceneName));
+        int requestedIndex = GetLoadingLevelIndex(sceneName);
+        if (requestedIndex >= 0)
+        {
+            TitleScreen.SetActive(false);
+            isLoading = true;
+            LoadingScreens[requestedIndex].SetActive(true);
+            StartCoroutine(LoadAsynchronously(sceneName));
+        }
+        else if (requestedIndex == -1) {
+            SceneManager.LoadScene("MainMenu");
+            currentScene = SceneNames.MainMenu;
+            TitleScreen.SetActive(true);
+        }
+            
+        else
+            Debug.Log("Invalid scene name requested.");
     }
     IEnumerator LoadAsynchronously(string sceneName) {
+        int requestedIndex = GetLoadingLevelIndex(sceneName);
         AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
         operation.allowSceneActivation = false;
         while (!operation.isDone) {
             if (loadingProgress < 1) {
                 loadingProgress = Mathf.Clamp01(operation.progress / 0.9f);
-                readySlide.value = loadingProgress;
+                ReadySlides[requestedIndex].value = loadingProgress;
             }
             else if (loadingProgress >= 1) {
-                if (readySlide.IsActive()) {
-                    readySlide.gameObject.SetActive(false);
+                if (ReadySlides[requestedIndex].IsActive()) {
+                    ReadySlides[requestedIndex].gameObject.SetActive(false);
                 }
             }
             if (playerisReady)
             {
+                playerisReady = false;
                 loadingProgress = 0f;
+                ReadySlides[requestedIndex].value = 0f;
+                ReadySlides[requestedIndex].gameObject.SetActive(false);
+                LoadingScreens[requestedIndex].SetActive(false);
+                isLoading = false;
                 operation.allowSceneActivation = true;
             }
-            Debug.Log("Looping");
             yield return null;
         }
     }
 
 
-    private void TogglePauseMenu() {
-        PauseScreen.SetActive(true);
+    public void TogglePauseMenu() {
+        if (!PauseScreen.activeSelf && !isLoading && currentScene != SceneNames.MainMenu)
+        {
+            PauseScreen.SetActive(true);
+            Time.timeScale = 0f;
+        }
+        else if (PauseScreen.activeSelf) {
+            PauseScreen.SetActive(false);
+            Time.timeScale = 1f;
+        }   
+    }
+
+    public void QuitApplication() {
+        Debug.Log("Exiting game...");
+        Application.Quit();
     }
 
     private void RestartLevel() { 
         
+    }
+
+    private int GetLoadingLevelIndex(string prompt) {
+        switch (prompt) {
+            case "Floor0":
+                currentScene = SceneNames.Floor0;
+                return 0;
+            case "Floor1":
+                currentScene = SceneNames.Floor1;
+                return 1;
+            case "Floor2":
+                currentScene = SceneNames.Floor2;
+                return 2;
+            case "Floor3":
+                currentScene = SceneNames.Floor3;
+                return 3;
+            case "FinalScene":
+                currentScene = SceneNames.FinalScene;
+                return 4;
+            case "MainMenu":
+                return -1;
+            default:
+                return -2;
+        }
     }
 
 }
