@@ -19,6 +19,7 @@ public class PlayerMovement : Movement
 
     private void Start()
     {
+        base.Start();
         rb = GetComponent<Rigidbody2D>();
         groundCheck = GetComponentInChildren<GroundCheck>();
     }

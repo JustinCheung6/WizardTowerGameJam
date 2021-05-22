@@ -16,7 +16,7 @@ public class Movement : MonoBehaviour
     [Header("Jumping")]
     [SerializeField] private int maxJumps = 1;
     [SerializeField] private float jumpForce = 5f;
-    [SerializeField] [Tooltip("How long can the user hold the 'jump button'")] 
+    [SerializeField] [Tooltip("How long can the user hold the 'jump button'")]
     private float maxJumpTime = 0.5f;
 
     [Header("Debugging (Don't Touch)")]
@@ -26,6 +26,15 @@ public class Movement : MonoBehaviour
 
     public Vector3 Velocity { get => rb.velocity; }
     public bool IsGrounded { get => groundCheck.IsGrounded; }
+
+    #region Animation
+    private Animator anim;
+    #endregion
+
+    protected virtual void Start()
+    {
+        anim = gameObject.GetComponent<Animator>();
+    }
 
     protected virtual void OnEnable()
     {
@@ -41,12 +50,32 @@ public class Movement : MonoBehaviour
         float move = rb.velocity.x;
 
         if (direction > 0)
+        {
             move = Mathf.Clamp(move + (moveAcc * Time.fixedDeltaTime), moveAcc, moveSpeed);
+            if (gameObject.transform.localScale.x < 0)
+                gameObject.transform.localScale = new Vector3(gameObject.transform.localScale.x * -1, gameObject.transform.localScale.y, gameObject.transform.localScale.z);
+            if (anim != null) {
+                if(!anim.GetBool("isRunning"))
+                    anim.SetBool("isRunning", true);
+            }
+        }
         else if (direction < 0)
+        {
             move = Mathf.Clamp(move - (moveAcc * Time.fixedDeltaTime), -moveSpeed, -moveAcc);
-        else
+            if (gameObject.transform.localScale.x > 0)
+                gameObject.transform.localScale = new Vector3(gameObject.transform.localScale.x * -1, gameObject.transform.localScale.y, gameObject.transform.localScale.z);
+            if (anim != null){
+                if (!anim.GetBool("isRunning"))
+                    anim.SetBool("isRunning", true);
+            }
+        }
+        else {
             move = 0;
-
+            if (anim != null){
+                if (anim.GetBool("isRunning"))
+                    anim.SetBool("isRunning", false);
+            }
+        }
         rb.velocity = new Vector3(move, rb.velocity.y);
     }
     protected void Jump(bool jumpPress, bool jumpDown)
@@ -85,10 +114,12 @@ public class Movement : MonoBehaviour
 
     public int GetDirection()
     {
-        if (rb.velocity.x > 0)
+        if (rb.velocity.x > 0) {
             return 1;
-        else if (rb.velocity.x < 0)
+        }
+        else if (rb.velocity.x < 0) {
             return -1;
+        } 
         else
             return 0;
     }

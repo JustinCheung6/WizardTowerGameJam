@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7192895740835829766}
   - component: {fileID: 7192895740835829767}
   - component: {fileID: 7192895740835829768}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: CaptureCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -79,12 +79,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7192895741148287296}
+  - component: {fileID: 7192895741148287299}
   - component: {fileID: 7192895741148287327}
   - component: {fileID: 7192895741148287326}
   - component: {fileID: 7192895741148287297}
   - component: {fileID: 7192895741148287298}
-  - component: {fileID: 7192895741148287299}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Enemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -107,6 +107,29 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7192895741148287299
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7192895741148287325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1402f8fcd4bc5a74fb8ec77bbf0d7765, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minRoamRange: 4
+  maxRoamRange: 5
+  idleTime: 2
+  roamSpeed: 1
+  chaseSpeed: 1.5
+  chaseJumpForce: 5
+  minCaptureRange: 2.5
+  captureExtraReactionTime: 0.5
+  chasedObject: {fileID: 0}
+  CaptureCollider: {fileID: 7192895740835829765}
+  LineOfSight: {fileID: 0}
 --- !u!212 &7192895741148287327
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -214,28 +237,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &7192895741148287299
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7192895741148287325}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1402f8fcd4bc5a74fb8ec77bbf0d7765, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  minRoamRange: 4
-  maxRoamRange: 5
-  idleTime: 2
-  roamSpeed: 1
-  chaseSpeed: 1.5
-  chaseJumpForce: 5
-  minCaptureRange: 2.5
-  captureExtraReactionTime: 0.5
-  chasedObject: {fileID: 0}
-  CaptureCollider: {fileID: 7192895740835829765}
 --- !u!1 &7192895742589487849
 GameObject:
   m_ObjectHideFlags: 0
@@ -247,7 +248,7 @@ GameObject:
   - component: {fileID: 7192895742589487850}
   - component: {fileID: 7192895742589487851}
   - component: {fileID: 7192895742589487852}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: LineOfSight
   m_TagString: Untagged
   m_Icon: {fileID: 0}

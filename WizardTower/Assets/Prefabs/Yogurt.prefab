@@ -203,6 +203,7 @@ MonoBehaviour:
   throwForce: 10
   throwAngle: 33
   noiseTime: 2
+  stunTime: 2
 --- !u!58 &8624191888514553686
 CircleCollider2D:
   m_ObjectHideFlags: 0
