@@ -52,10 +52,11 @@ public class GoFamiliar : Spell
         if (!press)
             return;
 
-        bool direction = !Player.p.SpriteRen.flipX;
+        bool direction = (Player.p.transform.localScale.x > 0);
 
         ReturnFamiliar(direction);
         CastFamiliar(direction);
+
         casted = true;
     }
 
@@ -85,33 +86,45 @@ public class GoFamiliar : Spell
         timer += Time.deltaTime;
         if(timer >= noiseTime)
         {
-            noiseCol.enabled = false;
-            timer = 0;
             UpdateManager.um.UpdateEvent -= MakeNoise;
+            casted = false;
         }
     }
 
     public override void ResetSpell()
     {
-        casted = false;
+        casting = false;
+        noiseCol.enabled = false;
+        col.enabled = false;
+        timer = 0;
     }
 
     public void OnCollisionEnter2D(Collision2D c)
     {
         if(c.gameObject.tag == "Enemy")
         {
-            casting = false;
             col.enabled = false;
+            casted = true;
         }
+        else if (c.gameObject.tag == "Floor")
+        {
+            
+            col.enabled = false;
+            noiseCol.enabled = true;
+            UpdateManager.um.UpdateEvent += MakeNoise;
+        }
+        else
+            Debug.Log("Tag not here: " + c.gameObject.tag);
     }
     public void OnTriggerEnter2D(Collider2D c)
     {
         if (c.tag == "Floor")
         {
-            casting = false;
             col.enabled = false;
             noiseCol.enabled = true;
             UpdateManager.um.UpdateEvent += MakeNoise;
         }
+        else
+            Debug.Log("Tag not here: " + c.gameObject.tag);
     }
 }

@@ -25,6 +25,7 @@ public class Movement : MonoBehaviour
     [SerializeField] private bool jumping = false; //If player is holding jump button
 
     public Vector3 Velocity { get => rb.velocity; }
+    public bool IsGrounded { get => groundCheck.IsGrounded; }
 
     protected virtual void OnEnable()
     {

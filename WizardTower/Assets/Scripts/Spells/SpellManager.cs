@@ -13,6 +13,8 @@ public class SpellManager : MonoBehaviour
     [SerializeField] private List<Spell> inventory = new List<Spell>();
     [SerializeField] private List<float> cooldowns = new List<float>();
 
+    private List<Spell> castedSpells = new List<Spell>();
+
     private Dictionary<int, List<Spell>> spellPools = new Dictionary<int, List<Spell>>();
 
     private void OnEnable()
@@ -61,19 +63,34 @@ public class SpellManager : MonoBehaviour
             inventory.RemoveAt(0);
             cooldowns.RemoveAt(0);
 
-            tmp.enabled = false;
-            tmp.ResetSpell();
+            inventory[0].enabled = true;
 
-            foreach(List<Spell> spellPool in spellPools.Values)
-            {
-                if (spellPool.Contains(tmp))
-                {
-                    spellPool.Remove(tmp);
-                    spellPool.Add(tmp);
-                    break;
-                }
-            }
+            castedSpells.Add(tmp);
         }
+
+        //Remove castedSpells if they're done being used
+        if(castedSpells.Count > 0)
+            for(int i = 0; i < castedSpells.Count; i++)
+                if (!castedSpells[i].SpellCasted)
+                {
+                    Spell tmp = castedSpells[i];
+                    castedSpells.RemoveAt(i);
+
+                    //Move spell to end of list
+                    foreach (List<Spell> spellPool in spellPools.Values)
+                    {
+                        if (spellPool.Contains(tmp))
+                        {
+                            spellPool.Remove(tmp);
+                            spellPool.Add(tmp);
+                            break;
+                        }
+                    }
+
+                    tmp.ResetSpell();
+                    tmp.enabled = false;
+                    i--;
+                }
     }
     private void ManageInventory()
     {
@@ -89,6 +106,9 @@ public class SpellManager : MonoBehaviour
             {
                 inventory.Add(spells[i]);
                 cooldowns.Add(spells[i].Cooldown);
+
+                if(inventory.Count == 1)
+                    inventory[0].enabled = true;
             }
         }
 
@@ -125,10 +145,15 @@ public class SpellManager : MonoBehaviour
         for(int i = 0; i < spellPool.Count; i++)
             if (!spellPool[i].enabled)
             {
-                spellPool[i].enabled = true;
+                spellPool[i].enabled = false;
                 return spellPool[i];
             }
 
-        return null;
+        //Create new spell if pool runs out
+        Spell spell = Instantiate(spellPrefabs[index], transform).GetComponent<Spell>();
+        spell.enabled = false;
+        spellPool.Add(spell);
+
+        return spell;
     }
 }
