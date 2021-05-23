@@ -823,6 +823,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 8583391409041777344, guid: f0f24624cebf45b40a3e87978dbb31bd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8583391411020271286, guid: f0f24624cebf45b40a3e87978dbb31bd, type: 3}
       propertyPath: m_Name
       value: Platform
@@ -1155,8 +1159,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spellPrefabs:
   - {fileID: 8624191888514553683, guid: 00e78ea280198fb44beb1eb898e80f70, type: 3}
-  inventory: []
-  cooldowns: []
 --- !u!4 &1133131827
 Transform:
   m_ObjectHideFlags: 0
@@ -4620,6 +4622,10 @@ PrefabInstance:
     - target: {fileID: 7192895741148287325, guid: cbda71ea7966c6e4f9f28aac494e0693, type: 3}
       propertyPath: m_Name
       value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 7192895741148287325, guid: cbda71ea7966c6e4f9f28aac494e0693, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cbda71ea7966c6e4f9f28aac494e0693, type: 3}

@@ -52,6 +52,9 @@ public class StickyString : Spell
         {
             //SET GUARDS' VELOCITY TO FLING TOWARDS PLAYER (also stop its regular movement)
             target = RaycastObject(false);
+            EnemyAI targetEnemyAI = target.gameObject.GetComponent<EnemyAI>();
+            if (targetEnemyAI != null) 
+                targetEnemyAI.TriggerStunState(true);
             //flingLeft = Player.p.transform.position.x < target.position.x;
 
             Player.pm.Immobilize();
@@ -95,6 +98,9 @@ public class StickyString : Spell
         {
             casted = false;
             //REENABLE GUARD'S MOVEMENT HERE, AND STOP EXTRA VELOCITY (Have Guard chase opposite direction)
+            EnemyAI targetEnemyAI = target.gameObject.GetComponent<EnemyAI>();
+            if (targetEnemyAI != null)
+                targetEnemyAI.TriggerStunState(false);
             UpdateManager.um.FixedUpdateEvent -= DragGuard;
             return;
         }

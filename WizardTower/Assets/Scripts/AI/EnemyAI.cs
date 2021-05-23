@@ -19,7 +19,7 @@ public class EnemyAI : MonoBehaviour
 
     #region State Management Variables
     protected enum State { 
-        Roaming, Idling, Chasing, Attacking, Stunned, TurnAndChase
+        Roaming, Idling, Chasing, Attacking, Stunned, TurnAndChase, Null
     }
     protected State state;
     #endregion
@@ -46,6 +46,7 @@ public class EnemyAI : MonoBehaviour
 
     #region Stunned Variables
     protected bool isStunned = false;
+    //protected bool isStunnedBool = false;
     protected float stunDuration = 0f;
     protected float stunStartTime;
     #endregion
@@ -56,6 +57,7 @@ public class EnemyAI : MonoBehaviour
     protected Animator anim;
     [SerializeField] protected GameObject CaptureCollider;
     [SerializeField] protected GameObject LineOfSight;
+    protected State returnToState = State.Null;
     #endregion
 
     protected void Start()
@@ -93,12 +95,14 @@ public class EnemyAI : MonoBehaviour
         switch (state) {
             case State.Roaming:
                 Debug.Log("Roaming");
+                CheckForStun(State.Roaming);
                 if (anim.GetBool("isAttacking"))
                     anim.SetBool("isAttacking", false);
                 MoveToPosition(roamSpeed,0);
                 break;
             case State.Idling:
                 Debug.Log("Idling");
+                CheckForStun(State.Idling);
                 if (anim.GetBool("isRunning"))
                     anim.SetBool("isRunning", false);
                 
@@ -112,6 +116,7 @@ public class EnemyAI : MonoBehaviour
                 break;
             case State.Chasing:
                 Debug.Log("Chasing");
+                CheckForStun(State.Chasing);
                 if (!anim.GetBool("isRunning"))
                     anim.SetBool("isRunning", true);
                 if (chasedObject != null)
@@ -133,6 +138,7 @@ public class EnemyAI : MonoBehaviour
                 break;
             case State.Attacking:
                 Debug.Log("Attacking");
+                CheckForStun(State.Attacking);
                 if (chasedObject.CompareTag("Player"))
                 {
                     if (Time.time - captureStartTime >= captureExtraReactionTime)
@@ -145,7 +151,7 @@ public class EnemyAI : MonoBehaviour
                     TriggerIdleState();
                 }
                 break;
-            case State.Stunned:
+/*            case State.Stunned:
                 Debug.Log("Stunned");
                 if (!isStunned)
                 {
@@ -163,9 +169,47 @@ public class EnemyAI : MonoBehaviour
                         TriggerIdleState();
                     }
                 }
+                break;*/
+            case State.Stunned:
+                Debug.Log("Stunned");
+                if (isStunned)
+                {
+                    if (!anim.GetBool("isStunned")) {
+                        anim.SetBool("isStunned", true);
+                        LineOfSight.SetActive(false);
+                        if (stunDuration > 0f)
+                            stunStartTime = Time.time;
+                    }
+                    if (stunDuration > 0f) { // Disable by time
+                        if (Time.time - stunStartTime >= stunDuration) {
+                            if (anim.GetBool("isStunned"))
+                            {
+                                isStunned = false;
+                                anim.SetBool("isStunned", false);
+                                LineOfSight.SetActive(true);
+                                stunDuration = 0f;
+                                TriggerIdleState();
+                            }
+                        }
+                    }
+                }
+                else // Disables if the bool is called; will override the time (if enemy gets "unstunned" before the 
+                     // timer runs out for Yogurt, then the timer is now irrelevant and the enemy is unstunned)
+                {
+                    if (anim.GetBool("isStunned")) {
+                        anim.SetBool("isStunned", false);
+                        LineOfSight.SetActive(true);
+                        stunDuration = 0f;
+                        if (returnToState == State.Null)
+                            TriggerIdleState();
+                        else
+                            state = returnToState;
+                    }
+                }
                 break;
             case State.TurnAndChase:
                 Debug.Log("Turn and Chasing");
+                CheckForStun(State.TurnAndChase);
                 if (turnAndChaseRequested)
                 {
                     turnAndChaseRequested = false;
@@ -240,6 +284,13 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    protected void CheckForStun(State s) {
+        if (anim.GetBool("isStunned") && !isStunned) {
+            returnToState = s;
+            state = State.Stunned;
+        }
+    }
+
     // Returns a random X direction for the AI to travel in
     public static float GetRandomXDirection() { 
         return UnityEngine.Random.Range(-1f, 1f);
@@ -255,8 +306,17 @@ public class EnemyAI : MonoBehaviour
     public void TriggerStunState(float stunDuration)
     {
         if (!isStunned) {
+            isStunned = true;
             this.stunDuration = stunDuration;
             state = State.Stunned;
         }
+    }
+    public void TriggerStunState(bool stunRequest)
+    {
+        if (stunRequest)
+            isStunned = true;
+        else
+            isStunned = false;
+        state = State.Stunned;
     }
 }

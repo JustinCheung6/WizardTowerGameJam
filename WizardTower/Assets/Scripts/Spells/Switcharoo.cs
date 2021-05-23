@@ -82,7 +82,8 @@ public class Switcharoo : Spell
             c.transform.position = playerPos;
             c.gameObject.SetActive(true);
 
-            //DO THE ENEMY CONFUSION HERE
+            //Enemy Confusion (Turn around & chase)
+            c.gameObject.GetComponent<EnemyAI>().turnAndChaseRequested = true;
         }
     }
 }
