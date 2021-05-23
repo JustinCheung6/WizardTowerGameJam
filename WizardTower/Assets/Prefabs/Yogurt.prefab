@@ -112,7 +112,7 @@ GameObject:
   - component: {fileID: 1414049645474198076}
   - component: {fileID: 8624191888514553686}
   - component: {fileID: 2920178662753850997}
-  m_Layer: 6
+  m_Layer: 9
   m_Name: Yogurt
   m_TagString: Distraction
   m_Icon: {fileID: 0}
@@ -198,7 +198,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cooldown: 5
-  casted: 0
+  noiseCol: {fileID: 0}
   summonOffset: {x: 1, y: 0}
   throwForce: 10
   throwAngle: 33

@@ -148,7 +148,7 @@ public class StickyString : Spell
         {
             Vector2 direction = (Player.p.transform.localScale.x > 0) ? Vector2.right : Vector2.left;
 
-            RaycastHit2D[] hits = Physics2D.RaycastAll(Player.p.transform.position, direction, castRange.y);
+            RaycastHit2D[] hits = Physics2D.RaycastAll(Player.p.transform.position, direction, castRange.x);
             foreach (RaycastHit2D hit in hits)
             {
                 if (hit.transform.CompareTag("Enemy"))

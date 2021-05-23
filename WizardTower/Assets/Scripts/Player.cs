@@ -10,8 +10,11 @@ public class Player : MonoBehaviour
     public static PlayerMovement pm = null;
 
     private SpriteRenderer sprite = null;
+    private Animator anim = null;
 
     public SpriteRenderer SpriteRen { get => sprite; }
+    public Animator Animator { get => anim; }
+    public bool LookingRight { get => transform.localScale.x > 0; }
 
     private void OnEnable()
     {
@@ -24,5 +27,6 @@ public class Player : MonoBehaviour
     private void Start()
     {
         sprite = GetComponentInChildren<SpriteRenderer>();
+        anim = GetComponentInChildren<Animator>();
     }
 }
