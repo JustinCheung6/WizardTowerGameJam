@@ -9181,7 +9181,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: FinalScene
+          m_StringArgument: Floor0
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1695973168
@@ -9670,6 +9670,7 @@ MonoBehaviour:
   TitleScreen: {fileID: 1335756814}
   PauseScreen: {fileID: 1085685074}
   CapturedScreen: {fileID: 1895383076}
+  TimerText: {fileID: 275195548}
   PasswordScreen: {fileID: 1102207744}
   PasswordInputField: {fileID: 433064166}
   PasswordValidationText: {fileID: 20737328}
@@ -9895,7 +9896,7 @@ Animator:
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 9cf45e7b7028ab149abaf494bb2a1c64, type: 2}
   m_CullingMode: 0
-  m_UpdateMode: 0
+  m_UpdateMode: 2
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 

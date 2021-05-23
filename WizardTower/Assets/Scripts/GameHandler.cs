@@ -29,6 +29,7 @@ public class GameHandler : MonoBehaviour
     [SerializeField] private GameObject TitleScreen;
     [SerializeField] private GameObject PauseScreen;
     [SerializeField] private GameObject CapturedScreen;
+    [SerializeField] private Text TimerText;
     [SerializeField] private GameObject PasswordScreen;
     [SerializeField] private InputField PasswordInputField;
     [SerializeField] private Text PasswordValidationText;
@@ -36,7 +37,7 @@ public class GameHandler : MonoBehaviour
 
 
     #region Reference bools
-    private static bool DoryGotCpatured = false;
+    private static bool DoryGotCaptured = false;
     private static bool playerisReady = false;
     private static bool isLoading = false;
     #endregion
@@ -53,7 +54,6 @@ public class GameHandler : MonoBehaviour
         else {
             Destroy(this.gameObject);
         }
-        currentScene = SceneNames.MainMenu;
         TitleScreen.SetActive(true);
     }
 
@@ -62,15 +62,15 @@ public class GameHandler : MonoBehaviour
         if (Input.GetButtonUp("Cancel")) {
             TogglePauseMenu();
         }
-        if (DoryGotCpatured) {
-            DoryGotCpatured = false;
+        if (DoryGotCaptured) {
+            DoryGotCaptured = false;
             RestartLevel();
         }    
     }
 
     #region Static set methods
     public static void SignalDoryCapture() {
-        DoryGotCpatured = true;
+        DoryGotCaptured = true;
     }
     public static void SignalPlayerReady() {
         playerisReady = true;
@@ -125,7 +125,7 @@ public class GameHandler : MonoBehaviour
     }
 
     public void TogglePauseMenu() {
-        if (!PauseScreen.activeSelf && !isLoading && currentScene != SceneNames.MainMenu)
+        if (!PauseScreen.activeSelf && !isLoading && !TitleScreen.activeSelf && !CapturedScreen.activeSelf)
         {
             PauseScreen.SetActive(true);
             Time.timeScale = 0f;
@@ -194,12 +194,31 @@ public class GameHandler : MonoBehaviour
 
     #endregion
 
-    private void RestartLevel() { 
+    private void RestartLevel() {
         // DORY COLLAPSE ANIMATION
+        StartCoroutine(RestartLevelCoro());
+       
+    }
+    IEnumerator RestartLevelCoro() {
+        yield return new WaitForSeconds(1);
         // TIMESCALE TO 0
+        Time.timeScale = 0f;
         // ENABLE CAPTURED SCREEN W/ ANIMATION
-        // WAIT 5 SECONDS
+        CapturedScreen.SetActive(true);
+        // WAIT 3 SECONDS
+        TimerText.text = "3";
+        yield return new WaitForSecondsRealtime(1);
+        TimerText.text = "2";
+        yield return new WaitForSecondsRealtime(1);
+        TimerText.text = "1";
+        yield return new WaitForSecondsRealtime(1);
+        TimerText.text = "Go!";
+        yield return new WaitForSecondsRealtime(1);
+        DoryGotCaptured = false;
+        CapturedScreen.SetActive(false);
         // RESET LEVEL
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        Time.timeScale = 1f;
     }
 
     private int GetLoadingLevelIndex(string prompt) {
