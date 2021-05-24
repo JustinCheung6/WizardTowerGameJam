@@ -121,15 +121,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minRoamRange: 4
   maxRoamRange: 5
-  idleTime: 2
+  idleTime: 0
   roamSpeed: 1
-  chaseSpeed: 1.5
-  chaseJumpForce: 5
+  chaseSpeed: 5
+  chaseJumpForce: 8
+  runTimeBeforeTurnAround: 1.5
   minCaptureRange: 2.5
   captureExtraReactionTime: 0.5
   chasedObject: {fileID: 0}
+  turnAndChaseRequested: 0
   CaptureCollider: {fileID: 7192895740835829765}
-  LineOfSight: {fileID: 0}
+  LineOfSight: {fileID: 7192895742589487849}
 --- !u!212 &7192895741148287327
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -209,7 +211,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 2
   m_LinearDrag: 0
   m_AngularDrag: 0
   m_GravityScale: 1

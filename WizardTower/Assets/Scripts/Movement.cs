@@ -21,8 +21,8 @@ public class Movement : MonoBehaviour
 
     [Header("Debugging (Don't Touch)")]
     [SerializeField] private int currentJumps = 0;
-    [SerializeField] private float jumpTime = 0f; //Time that user has held the 'jump button'
-    [SerializeField] private bool jumping = false; //If player is holding jump button
+    private float jumpTime = 0f; //Time that user has held the 'jump button'
+    private bool jumping = false; //If player is holding jump button
 
     public Vector3 Velocity { get => rb.velocity; }
     public bool IsGrounded { get => groundCheck.IsGrounded; }

@@ -6,25 +6,35 @@ public class GoFamiliar : Spell
 {
     //Spell that will makes a distraction when it hits the floor, and stuns the gaurd if it hits them
 
+    #region Components
     private Rigidbody2D rb = null;
     private SpriteRenderer sprite = null;
-    [SerializeField] private CircleCollider2D noiseCol = null;
+    private CircleCollider2D noiseCol = null;
+    #endregion
 
-    private Vector2 forceDirection = new Vector2();
-
+    #region Customizable Variables
+    [Header("Go Familiar")]
     [SerializeField] private Vector2 summonOffset = new Vector2();
     [SerializeField] private float throwForce = 5f;
     [SerializeField] private float throwAngle = 45f;
     [SerializeField] private float noiseTime = 2f;
-    [SerializeField] private float stunTime = 2f; 
+    [SerializeField] private float stunTime = 2f;
+    #endregion
 
+    private Vector2 forceDirection = new Vector2();
     private float timer = 0f;
+    //Physics layers needed in script (switches between the two)
+    [SerializeField] private int spellLayer;
+    [SerializeField] private int idleLayer; 
 
 
     public bool MakingNoise { get => timer > 0f; }
 
     private void Start()
     {
+        spellLayer = LayerMask.NameToLayer("Spell");
+        gameObject.layer = idleLayer = LayerMask.NameToLayer("SpellIdle");
+
         forceDirection = new Vector2(Mathf.Cos((Mathf.PI * throwAngle) / 180), 
             Mathf.Sin((Mathf.PI * throwAngle) / 180));
         rb = GetComponent<Rigidbody2D>();
@@ -52,10 +62,9 @@ public class GoFamiliar : Spell
             return;
 
         casting = true;
-        bool direction = !Player.p.SpriteRen.flipX;
 
-        ReturnFamiliar(direction);
-        CastFamiliar(direction);
+        ReturnFamiliar(Player.p.LookingRight);
+        CastFamiliar(Player.p.LookingRight);
         casted = true;
     }
 
@@ -70,6 +79,9 @@ public class GoFamiliar : Spell
     {
         if (!sprite.enabled)
             sprite.enabled = true;
+
+        gameObject.layer = spellLayer;
+
         int direction = (isRight) ? 1 : -1;
 
         rb.velocity = new Vector2(direction * forceDirection.x, forceDirection.y) * throwForce;
@@ -101,6 +113,8 @@ public class GoFamiliar : Spell
 
         if(c.gameObject.CompareTag("Enemy"))
         {
+            gameObject.layer = idleLayer;
+
             c.gameObject.GetComponent<EnemyAI>().TriggerStunState(stunTime);
             casting = false;
             casted = false;
@@ -114,6 +128,8 @@ public class GoFamiliar : Spell
 
         if (c.gameObject.CompareTag("Floor"))
         {
+            gameObject.layer = idleLayer;
+
             Debug.Log("Yogurt Floor");
             casting = false;
             noiseCol.enabled = true;

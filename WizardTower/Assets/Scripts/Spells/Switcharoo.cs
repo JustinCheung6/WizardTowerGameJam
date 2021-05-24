@@ -5,6 +5,7 @@ using UnityEngine;
 public class Switcharoo : Spell
 {
     private SpriteRenderer sprite = null;
+    private Collider2D col = null;
 
     [Header("Switcharoo")]
     [SerializeField] private float onDuration = 1f;
@@ -15,6 +16,10 @@ public class Switcharoo : Spell
     private void Start()
     {
         sprite = GetComponent<SpriteRenderer>();
+        col = GetComponent<Collider2D>();
+
+        sprite.enabled = false;
+        col.enabled = false;
     }
 
     public override bool CanCast()
@@ -29,6 +34,7 @@ public class Switcharoo : Spell
 
         casting = true;
         sprite.enabled = true;
+        col.enabled = true;
         UpdateManager.um.UpdateEvent += SwitchReady;
     }
 
@@ -36,6 +42,7 @@ public class Switcharoo : Spell
     {
         timer = 0f;
         sprite.enabled = false;
+        col.enabled = false;
 
         casting = false;
         casted = false;
@@ -53,6 +60,7 @@ public class Switcharoo : Spell
         }
 
         timer += Time.deltaTime;
+        transform.position = Player.p.transform.position;
     }
 
     private void ExtendCooldown()
@@ -70,6 +78,8 @@ public class Switcharoo : Spell
 
         if (c.gameObject.CompareTag("Enemy"))
         {
+            Debug.Log("Switch Collision");
+
             casting = false;
             casted = true;
 
@@ -84,6 +94,37 @@ public class Switcharoo : Spell
 
             //Enemy Confusion (Turn around & chase)
             c.gameObject.GetComponent<EnemyAI>().turnAndChaseRequested = true;
+
+            casted = false;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D c)
+    {
+        if (!casting)
+            return;
+
+        if (c.gameObject.CompareTag("Enemy"))
+        {
+            Debug.Log("Switch Collision");
+
+            casting = false;
+            casted = true;
+
+            UpdateManager.um.UpdateEvent -= SwitchReady;
+
+            //Switch enemy and player positions
+            Vector3 playerPos = Player.p.transform.position;
+            c.gameObject.SetActive(false);
+            Player.p.transform.position = c.transform.position;
+            c.transform.position = playerPos;
+            c.gameObject.SetActive(true);
+
+            //Enemy Confusion (Turn around & chase)
+            c.gameObject.GetComponent<EnemyAI>().turnAndChaseRequested = true;
+
+            SpellManager.sm.ManualPop(this);
+            casted = false;
         }
     }
 }
