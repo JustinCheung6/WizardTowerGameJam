@@ -18,8 +18,12 @@ public class SpellManager : MonoBehaviour
 
     private Dictionary<int, List<Spell>> spellPools = new Dictionary<int, List<Spell>>();
 
+    public int SpellAmount { get => spellPrefabs.Length; }
     public bool IsCurrentSpell(Spell spell) { return spell == inventory[0]; }
     public void ExtendCooldown(float amount) { cooldowns[0] += amount; }
+    public GameObject GetSpellPrefab(int index) { if(index < spellPrefabs.Length) return spellPrefabs[index]; return null; }
+    public Spell GetInventory(int index) { if (index < inventory.Count) return inventory[index]; return null; }
+    public float GetCooldown(int index) { if (index < cooldowns.Count) return cooldowns[index]; return -1f; }
 
     private void OnEnable()
     {
