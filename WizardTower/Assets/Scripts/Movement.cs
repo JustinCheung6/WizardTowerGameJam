@@ -24,7 +24,7 @@ public class Movement : MonoBehaviour
     private float jumpTime = 0f; //Time that user has held the 'jump button'
     private bool jumping = false; //If player is holding jump button
 
-    public Vector3 Velocity { get => rb.velocity; }
+    public Vector3 Velocity { get => rb.velocity; set => rb.velocity = value; }
     public bool IsGrounded { get => groundCheck.IsGrounded; }
 
     #region Animation

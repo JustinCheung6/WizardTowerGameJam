@@ -103,6 +103,7 @@ public class StickyString : Spell
 
         if (Player.p.transform.position.y + travel >= target.position.y - ceilingOffset)
         {
+            Player.pm.Velocity = new Vector3(Player.pm.Velocity.x, 0f, 0f);
             casted = false;
             UpdateManager.um.FixedUpdateEvent -= ShootUp;
         }
@@ -167,7 +168,7 @@ public class StickyString : Spell
             RaycastHit2D[] hits = Physics2D.RaycastAll(Player.p.transform.position, direction, castRange.x);
             foreach (RaycastHit2D hit in hits)
             {
-                if (hit.transform.CompareTag("Enemy"))
+                if (hit.transform.CompareTag("Enemy") && !(hit.transform.gameObject.layer == LayerMask.NameToLayer("YogurtStun")))
                     return hit.transform;
             }
             return null;
