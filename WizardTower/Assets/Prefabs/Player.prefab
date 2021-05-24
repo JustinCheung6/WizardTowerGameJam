@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1356173665910376704}
   - component: {fileID: 1356173665910376708}
   - component: {fileID: 1356173665910376706}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -115,7 +115,7 @@ GameObject:
   - component: {fileID: 1356173666975755797}
   - component: {fileID: 1356173666975755796}
   - component: {fileID: 1356173666975755819}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -237,7 +237,7 @@ GameObject:
   - component: {fileID: 2399439494218040346}
   - component: {fileID: 2706419881951324145}
   - component: {fileID: 2701306219918885136}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: PlayerSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}

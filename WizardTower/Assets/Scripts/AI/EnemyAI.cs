@@ -169,12 +169,8 @@ public class EnemyAI : MonoBehaviour
                         LineOfSight.SetActive(false);
                         if (stunDuration > 0f)
                             stunStartTime = Time.time;
-                        if (isYogurtStunned) {
-                            gameObject.layer = 10;
-                            Physics2D.IgnoreLayerCollision(3, 8, false);
-                            Physics2D.IgnoreLayerCollision(6, 8, false);
-                            Physics2D.IgnoreLayerCollision(8, 8, false);
-                        }
+                        if (isYogurtStunned) 
+                            gameObject.layer = LayerMask.NameToLayer("YogurtStun");
                             
                     }
                     if (stunDuration > 0f) { // Disable by time
@@ -182,11 +178,8 @@ public class EnemyAI : MonoBehaviour
                             if (anim.GetBool("isStunned"))
                             {
                                 if (isYogurtStunned) {
-                                    gameObject.layer = 8;
+                                    gameObject.layer = LayerMask.NameToLayer("Enemy");
                                     isYogurtStunned = false;
-                                    Physics2D.IgnoreLayerCollision(3, 8, false);
-                                    Physics2D.IgnoreLayerCollision(6, 8, false);
-                                    Physics2D.IgnoreLayerCollision(8, 8, false);
                                 }
                                 isStunned = false;
                                 anim.SetBool("isStunned", false);
@@ -204,7 +197,7 @@ public class EnemyAI : MonoBehaviour
                         anim.SetBool("isStunned", false);
                         if (isYogurtStunned)
                         {
-                            gameObject.layer = 8;
+                            gameObject.layer = LayerMask.NameToLayer("Enemy");
                             isYogurtStunned = false;
                         }
                         LineOfSight.SetActive(true);
