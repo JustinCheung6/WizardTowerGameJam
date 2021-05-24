@@ -10,6 +10,7 @@ public class EnemyCaptureCollider : MonoBehaviour
         if (collision.CompareTag("Player")) {
             collision.tag = "Distraction";
             GameHandler.SignalDoryCapture();
+            collision.GetComponent<PlayerMovement>().Immobilize();
             Player.p.Animator.Play("captured");
         }
     }
