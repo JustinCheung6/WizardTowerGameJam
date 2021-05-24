@@ -33,7 +33,7 @@ public class Movement : MonoBehaviour
 
     protected virtual void Start()
     {
-        anim = gameObject.GetComponent<Animator>();
+        anim = gameObject.GetComponentInChildren<Animator>();
     }
 
     protected virtual void OnEnable()
