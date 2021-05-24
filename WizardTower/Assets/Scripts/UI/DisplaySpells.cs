@@ -9,7 +9,7 @@ public class DisplaySpells : MonoBehaviour
     private Image[] spells = null;
     private RectTransform[] masks = null;
 
-    [SerializeField] private Vector2[] maskOrigins = null;
+    private Vector2[] maskOrigins = null;
 
     private float[] maskSize = null;
 
@@ -65,22 +65,32 @@ public class DisplaySpells : MonoBehaviour
     {
         for (int i = 0; i < spellReferences.Count; i++)
         {
-            //Change sprite of spell
-            Spell spell = SpellManager.sm.GetInventory(i);
-
-            Debug.Log("Looking for Type: " + spell.GetType());
-            spells[i].sprite = spellReferences[spell.GetType()];
-
-            //Change position of spell
-            float scale = (SpellManager.sm.GetCooldown(i) / spell.Cooldown);
-            masks[i].anchoredPosition = new Vector2(maskOrigins[i].x, maskOrigins[i].y + scale * maskSize[i]);
-            spells[i].rectTransform.anchoredPosition = new Vector2(0f, -scale * 100);
-
-            //Change black or white
-            if (SpellManager.sm.GetCooldown(i) == 0)
-                spells[i].color = Color.white;
-            else
+            if(SpellManager.sm.InventorySize < spellReferences.Count)
+            {
+                spells[i].sprite = null;
+                masks[i].anchoredPosition = maskOrigins[i];
+                spells[i].rectTransform.anchoredPosition = new Vector2(0f, -100f);
                 spells[i].color = Color.black;
+            }
+            else
+            {
+                //Change sprite of spell
+                Spell spell = SpellManager.sm.GetInventory(i);
+
+                Debug.Log("Looking for Type: " + spell.GetType());
+                spells[i].sprite = spellReferences[spell.GetType()];
+
+                //Change position of spell
+                float scale = (SpellManager.sm.GetCooldown(i) / spell.Cooldown);
+                masks[i].anchoredPosition = new Vector2(maskOrigins[i].x, maskOrigins[i].y + scale * maskSize[i]);
+                spells[i].rectTransform.anchoredPosition = new Vector2(0f, -scale * 100);
+
+                //Change black or white
+                if (SpellManager.sm.GetCooldown(i) == 0)
+                    spells[i].color = Color.white;
+                else
+                    spells[i].color = Color.black;
+            }
         }
     }
 }
