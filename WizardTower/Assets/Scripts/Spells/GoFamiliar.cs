@@ -115,7 +115,7 @@ public class GoFamiliar : Spell
         {
             gameObject.layer = idleLayer;
 
-            c.gameObject.GetComponent<EnemyAI>().TriggerStunState(stunTime);
+            c.gameObject.GetComponent<EnemyAI>().TriggerStunState(stunTime, true);
             casting = false;
             casted = false;
         }

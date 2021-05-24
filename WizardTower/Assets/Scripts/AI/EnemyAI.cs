@@ -19,7 +19,7 @@ public class EnemyAI : MonoBehaviour
 
     #region State Management Variables
     protected enum State { 
-        Roaming, Idling, Chasing, Attacking, Stunned, TurnAndChase, Null
+        Roaming, Idling, Chasing, Attacking, Stunned, TiedUp, TurnAndChase, Null
     }
     protected State state;
     #endregion
@@ -46,7 +46,7 @@ public class EnemyAI : MonoBehaviour
 
     #region Stunned Variables
     protected bool isStunned = false;
-    //protected bool isStunnedBool = false;
+    protected bool isYogurtStunned = false;
     protected float stunDuration = 0f;
     protected float stunStartTime;
     #endregion
@@ -169,11 +169,25 @@ public class EnemyAI : MonoBehaviour
                         LineOfSight.SetActive(false);
                         if (stunDuration > 0f)
                             stunStartTime = Time.time;
+                        if (isYogurtStunned) {
+                            gameObject.layer = 10;
+                            Physics2D.IgnoreLayerCollision(3, 8, false);
+                            Physics2D.IgnoreLayerCollision(6, 8, false);
+                            Physics2D.IgnoreLayerCollision(8, 8, false);
+                        }
+                            
                     }
                     if (stunDuration > 0f) { // Disable by time
                         if (Time.time - stunStartTime >= stunDuration) {
                             if (anim.GetBool("isStunned"))
                             {
+                                if (isYogurtStunned) {
+                                    gameObject.layer = 8;
+                                    isYogurtStunned = false;
+                                    Physics2D.IgnoreLayerCollision(3, 8, false);
+                                    Physics2D.IgnoreLayerCollision(6, 8, false);
+                                    Physics2D.IgnoreLayerCollision(8, 8, false);
+                                }
                                 isStunned = false;
                                 anim.SetBool("isStunned", false);
                                 LineOfSight.SetActive(true);
@@ -188,6 +202,14 @@ public class EnemyAI : MonoBehaviour
                 {
                     if (anim.GetBool("isStunned")) {
                         anim.SetBool("isStunned", false);
+                        if (isYogurtStunned)
+                        {
+                            gameObject.layer = 8;
+                            isYogurtStunned = false;
+                            Physics2D.IgnoreLayerCollision(3, 8, false);
+                            Physics2D.IgnoreLayerCollision(6, 8, false);
+                            Physics2D.IgnoreLayerCollision(8, 8, false);
+                        }
                         LineOfSight.SetActive(true);
                         stunDuration = 0f;
                         if (returnToState == State.Null)
@@ -310,12 +332,14 @@ public class EnemyAI : MonoBehaviour
         state = State.Idling;
         idleStartTime = Time.time;
     }
-    public void TriggerStunState(float stunDuration)
+    public void TriggerStunState(float stunDuration, bool stunnedByYogurt = false)
     {
         if (!isStunned) {
             isStunned = true;
             this.stunDuration = stunDuration;
             state = State.Stunned;
+            if (stunnedByYogurt)
+                isYogurtStunned = true;
         }
     }
     public void TriggerStunState(bool stunRequest)
