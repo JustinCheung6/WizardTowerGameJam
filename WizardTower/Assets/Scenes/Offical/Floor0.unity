@@ -4436,6 +4436,10 @@ PrefabInstance:
       propertyPath: LineOfSight
       value: 
       objectReference: {fileID: 1111081743}
+    - target: {fileID: 7192895741148287299, guid: cbda71ea7966c6e4f9f28aac494e0693, type: 3}
+      propertyPath: captureExtraReactionTime
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7192895741148287325, guid: cbda71ea7966c6e4f9f28aac494e0693, type: 3}
       propertyPath: m_Name
       value: Enemy
