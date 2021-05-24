@@ -203,6 +203,8 @@ public class GameHandler : MonoBehaviour
         yield return new WaitForSeconds(1);
         // TIMESCALE TO 0
         Time.timeScale = 0f;
+        AsyncOperation operation = SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
+        operation.allowSceneActivation = false;
         // ENABLE CAPTURED SCREEN W/ ANIMATION
         CapturedScreen.SetActive(true);
         // WAIT 3 SECONDS
@@ -217,7 +219,7 @@ public class GameHandler : MonoBehaviour
         DoryGotCaptured = false;
         CapturedScreen.SetActive(false);
         // RESET LEVEL
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        operation.allowSceneActivation = true;
         Time.timeScale = 1f;
     }
 
