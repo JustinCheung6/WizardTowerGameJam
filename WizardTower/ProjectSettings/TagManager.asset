@@ -8,6 +8,10 @@ TagManager:
   - Distraction
   - Floor
   - Ceiling
+  - 1stSpell
+  - 2ndSpell
+  - 3rdSpell
+  - Icon
   layers:
   - Default
   - TransparentFX
