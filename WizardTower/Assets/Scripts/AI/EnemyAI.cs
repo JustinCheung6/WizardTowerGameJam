@@ -72,23 +72,13 @@ public class EnemyAI : MonoBehaviour
         SetRoamDirection();
     }
 
-    /*    protected void OnEnable()
-        {
-            UpdateManager.um.FixedUpdateEvent += MoveToPosition;
-        }
-
-        protected void OnDisable()
-        {
-            UpdateManager.um.FixedUpdateEvent -= MoveToPosition;
-        }*/
-
     protected void FixedUpdate()
     {
-        StateManager();
         if (isStunned)
             state = State.Stunned;
         if (turnAndChaseRequested)
             state = State.TurnAndChase;
+        StateManager();
     }
 
     protected void StateManager() {
@@ -284,11 +274,22 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    protected void CheckForStun(State s) {
+    protected bool CheckForStun(State s) {
         if (anim.GetBool("isStunned") && !isStunned) {
             returnToState = s;
             state = State.Stunned;
+            return true;
         }
+        return false;
+    }
+
+    protected bool CheckForStun()
+    {
+        if (anim.GetBool("isStunned") && !isStunned)
+            return true;
+        else if (isStunned)
+            return true;
+        return false;
     }
 
     // Returns a random X direction for the AI to travel in
@@ -318,5 +319,15 @@ public class EnemyAI : MonoBehaviour
         else
             isStunned = false;
         state = State.Stunned;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player") && !CheckForStun()) {
+            collision.gameObject.tag = "Distraction";
+            GameHandler.SignalDoryCapture();
+            collision.gameObject.GetComponent<PlayerMovement>().Immobilize();
+            Player.p.Animator.Play("captured");
+        }
     }
 }
