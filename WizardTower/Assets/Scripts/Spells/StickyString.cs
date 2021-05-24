@@ -62,6 +62,8 @@ public class StickyString : Spell
             casted = true;
             casting = false;
 
+            flingLeft = Player.p.transform.position.x < target.position.x;
+
             UpdateManager.um.FixedUpdateEvent += DragGuard;
         }
     }
