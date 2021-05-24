@@ -206,9 +206,6 @@ public class EnemyAI : MonoBehaviour
                         {
                             gameObject.layer = 8;
                             isYogurtStunned = false;
-                            Physics2D.IgnoreLayerCollision(3, 8, false);
-                            Physics2D.IgnoreLayerCollision(6, 8, false);
-                            Physics2D.IgnoreLayerCollision(8, 8, false);
                         }
                         LineOfSight.SetActive(true);
                         stunDuration = 0f;
