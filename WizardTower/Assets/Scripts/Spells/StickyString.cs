@@ -18,6 +18,9 @@ public class StickyString : Spell
     [SerializeField] private float upSpeed = 10f;
     [Tooltip("How far will player be from ceiling after being launched")]
     [SerializeField] private float ceilingOffset = 1f;
+    [Header("Guard Grab")]
+    [SerializeField] private float xPullSpeed = 10f;
+    [SerializeField] private float yPullSpeed = 0f;
 
     private void Start()
     {
@@ -63,7 +66,19 @@ public class StickyString : Spell
             casting = false;
 
             flingLeft = Player.p.transform.position.x < target.position.x;
+            if (targetEnemyAI != null) {
+                if (flingLeft)
+                {
+                    targetEnemyAI.ExternalForce(-1 * xPullSpeed, yPullSpeed);
+                    Debug.Log("Flinging Left");
+                }
 
+                else {
+                    targetEnemyAI.ExternalForce(xPullSpeed, yPullSpeed);
+                    Debug.Log("Flinging Right");
+                }
+                    
+            }
             UpdateManager.um.FixedUpdateEvent += DragGuard;
         }
     }
@@ -112,7 +127,6 @@ public class StickyString : Spell
                 stringSize);
             transform.position = new Vector3(target.position.x + 
                 (Player.p.transform.position.x - target.position.x) / 2, Player.p.transform.position.y);
-
         }
         else if (Player.p.transform.position.x < target.position.x)
         {

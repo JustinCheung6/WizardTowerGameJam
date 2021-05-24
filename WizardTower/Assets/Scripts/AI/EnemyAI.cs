@@ -227,7 +227,7 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    protected void MoveToPosition(float speedX, float jumpForce) {
+    protected void MoveToPosition(float speedX, float jumpForce, bool directionMatters = true) {
         if ((roamingToRight && rb2d.position.x >= roamingPosition.x) || (!roamingToRight && rb2d.position.x <= roamingPosition.x)) {
             anim.SetBool("isRunning", false);
             TriggerIdleState();
@@ -236,12 +236,18 @@ public class EnemyAI : MonoBehaviour
         {
             if (!anim.GetBool("isRunning"))
                 anim.SetBool("isRunning", true);
-            if (roamingToRight && rb2d.velocity.y == 0)
-                //rb2d.MovePosition(rb2d.position + new Vector2(speedX, 0) * Time.fixedDeltaTime);
+            if (directionMatters)
+            {
+                if (roamingToRight && rb2d.velocity.y == 0)
+                    //rb2d.MovePosition(rb2d.position + new Vector2(speedX, 0) * Time.fixedDeltaTime);
+                    rb2d.velocity = new Vector2(speedX, 0);
+                else if (!roamingToRight && rb2d.velocity.y == 0)
+                    //rb2d.MovePosition(rb2d.position + new Vector2(speedX * -1, 0) * Time.fixedDeltaTime);
+                    rb2d.velocity = new Vector2(speedX * -1, 0);
+            }
+            else {
                 rb2d.velocity = new Vector2(speedX, 0);
-            else if(!roamingToRight && rb2d.velocity.y == 0)
-                //rb2d.MovePosition(rb2d.position + new Vector2(speedX * -1, 0) * Time.fixedDeltaTime);
-                rb2d.velocity = new Vector2(speedX * -1, 0);
+            }
             if (chasedObject != null) {
                 float direction = chasedObject.transform.position.x - rb2d.position.x;
                 if ((direction < 0 && transform.localScale.x > 0) || (direction > 0 && transform.localScale.x < 0))
@@ -322,12 +328,12 @@ public class EnemyAI : MonoBehaviour
     }
 
     public void ExternalForce(float xVelocity, float yVelocity = 0f) {
-        MoveToPosition(xVelocity, yVelocity);
+        MoveToPosition(xVelocity, yVelocity, false);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Player") && !CheckForStun()) {
+        if (collision.gameObject.CompareTag("Player")) {
             collision.gameObject.tag = "Distraction";
             GameHandler.SignalDoryCapture();
             collision.gameObject.GetComponent<PlayerMovement>().Immobilize();
