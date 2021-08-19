@@ -14,7 +14,10 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] protected float runTimeBeforeTurnAround = 1.5f;
     [SerializeField] protected float minCaptureRange = 2.5f;
     [SerializeField] protected float captureExtraReactionTime = 0.5f;
-    
+
+    [SerializeField] protected bool randomRoaming = false;
+
+
     #endregion
 
     #region State Management Variables
@@ -90,6 +93,7 @@ public class EnemyAI : MonoBehaviour
                     anim.SetBool("isAttacking", false);
                 MoveToPosition(roamSpeed,0);
                 break;
+
             case State.Idling:
                 Debug.Log("Idling");
                 CheckForStun(State.Idling);
@@ -240,12 +244,32 @@ public class EnemyAI : MonoBehaviour
     }
 
     protected void MoveToPosition(float speedX, float jumpForce, bool directionMatters = true) {
-        if ((roamingToRight && rb2d.position.x >= roamingPosition.x) || (!roamingToRight && rb2d.position.x <= roamingPosition.x)) {
+        if ( ((roamingToRight && rb2d.position.x >= roamingPosition.x) || (!roamingToRight && rb2d.position.x <= roamingPosition.x)) && randomRoaming) {
+            Debug.Log("Flat 1");
             anim.SetBool("isRunning", false);
             TriggerIdleState();
         }
         else
         {
+            if (!randomRoaming &&
+                (roamingToRight && rb2d.position.x >= roamingPosition.x) ||
+                (!roamingToRight && rb2d.position.x <= roamingPosition.x))
+            {
+                Debug.Log("Flat 2");
+                if (roamingToRight)
+                {
+                    Debug.Log("Flat 2.1");
+                    roamingToRight = false;
+                }
+                else
+                {
+                    Debug.Log("Flat 2.2");
+                    roamingToRight = true;
+                }
+                directionMatters = true;
+            }
+
+
             if (!anim.GetBool("isRunning"))
                 anim.SetBool("isRunning", true);
             if (directionMatters)
@@ -274,7 +298,9 @@ public class EnemyAI : MonoBehaviour
 
     // Get a random roaming position
     protected Vector2 GetRoamingPosition() {
-        Vector2 roamVector = new Vector2(startingPosition.x + GetRandomXDirection() * Random.Range(minRoamRange, maxRoamRange), rb2d.position.y);
+        Vector2 roamVector = (randomRoaming) ?
+            new Vector2(startingPosition.x + GetRandomXDirection() * Random.Range(minRoamRange, maxRoamRange), rb2d.position.y)
+            : new Vector2(startingPosition.x + (transform.localScale.x * maxRoamRange), rb2d.position.y);
         float direction = roamVector.x - rb2d.position.x;
         if ((direction < 0 && transform.localScale.x > 0) || (direction > 0 && transform.localScale.x < 0))
             transform.localScale = new Vector3(-1 * transform.localScale.x, transform.localScale.y, transform.localScale.z);
