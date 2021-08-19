@@ -256,16 +256,8 @@ public class EnemyAI : MonoBehaviour
                 (!roamingToRight && rb2d.position.x <= roamingPosition.x))
             {
                 Debug.Log("Flat 2");
-                if (roamingToRight)
-                {
-                    Debug.Log("Flat 2.1");
-                    roamingToRight = false;
-                }
-                else
-                {
-                    Debug.Log("Flat 2.2");
-                    roamingToRight = true;
-                }
+                SetRoamDirection();
+                roamingPosition = GetRoamingPosition();
                 directionMatters = true;
             }
 
@@ -298,9 +290,20 @@ public class EnemyAI : MonoBehaviour
 
     // Get a random roaming position
     protected Vector2 GetRoamingPosition() {
-        Vector2 roamVector = (randomRoaming) ?
+/*        Vector2 roamVector = (randomRoaming) ?
             new Vector2(startingPosition.x + GetRandomXDirection() * Random.Range(minRoamRange, maxRoamRange), rb2d.position.y)
-            : new Vector2(startingPosition.x + (transform.localScale.x * maxRoamRange), rb2d.position.y);
+            : new Vector2(startingPosition.x + maxRoamRange, rb2d.position.y);*/
+
+        Vector2 roamVector = new Vector2();
+        if (randomRoaming)
+            roamVector = new Vector2(startingPosition.x + GetRandomXDirection() * Random.Range(minRoamRange, maxRoamRange), rb2d.position.y);
+        else { 
+            if(roamingToRight)
+                roamVector = new Vector2(startingPosition.x + maxRoamRange, rb2d.position.y);
+            else
+                roamVector = new Vector2(startingPosition.x + (-1.0f * maxRoamRange), rb2d.position.y);
+        }
+
         float direction = roamVector.x - rb2d.position.x;
         if ((direction < 0 && transform.localScale.x > 0) || (direction > 0 && transform.localScale.x < 0))
             transform.localScale = new Vector3(-1 * transform.localScale.x, transform.localScale.y, transform.localScale.z);
@@ -308,9 +311,9 @@ public class EnemyAI : MonoBehaviour
     }
 
     protected void SetRoamDirection() {
-        if (rb2d.position.x > roamingPosition.x)
+        if (rb2d.position.x >= roamingPosition.x)
             roamingToRight = false;
-        else if (rb2d.position.x < roamingPosition.x)
+        else if (rb2d.position.x <= roamingPosition.x)
             roamingToRight = true;
         else
         {

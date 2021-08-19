@@ -18839,7 +18839,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7192895741148287296, guid: cbda71ea7966c6e4f9f28aac494e0693, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9
+      value: -2.66
       objectReference: {fileID: 0}
     - target: {fileID: 7192895741148287296, guid: cbda71ea7966c6e4f9f28aac494e0693, type: 3}
       propertyPath: m_LocalPosition.y
@@ -18887,11 +18887,11 @@ PrefabInstance:
       objectReference: {fileID: 1111081743}
     - target: {fileID: 7192895741148287299, guid: cbda71ea7966c6e4f9f28aac494e0693, type: 3}
       propertyPath: maxRoamRange
-      value: 17
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7192895741148287299, guid: cbda71ea7966c6e4f9f28aac494e0693, type: 3}
       propertyPath: minRoamRange
-      value: 0
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7192895741148287299, guid: cbda71ea7966c6e4f9f28aac494e0693, type: 3}
       propertyPath: randomRoaming
